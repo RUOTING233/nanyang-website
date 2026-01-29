@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>联系我们 - 留声南洋</title>
+    <link rel="stylesheet" href="/static/css/end.css">
+</head>
+<body>
+
+    <nav class="main-nav">
+        <ul>
+            <li><a href="/">首页</a></li>
+            <li><a href="/exhibition.html">项目介绍</a></li>
+            <li><a href="/archive">南渡纪</a></li>
+            <li><a href="/map">南行图</a></li>
+            <li><a href="/base">南洋文献</a></li>
+            <li><a href="/end" class="active">联系我们</a></li>
+        </ul>
+    </nav>
+
+    <div class="contact-container">
+        <div class="contact-box">
+            
+            <div class="contact-bg-layer">
+                <img src="/static/images/gramophone-bg.png" alt="">
+            </div>
+
+            <div class="contact-content" id="typewriter-area">
+                <h1 class="type-line">联系我们</h1>
+                
+                <div class="divider type-line fade-only"></div>
+                
+                <p class="type-line">如果您对本项目有任何疑问、建议</p>
+                <p class="type-line">或持有相关文献愿意提供</p>
+                <p class="type-line">欢迎通过以下方式与我们联系</p>
+                
+                <br>
+                
+                <p class="contact-info type-line">Email: 15828509574@163.com</p>
+                <p class="contact-info type-line">地址: 四川大学文学与新闻学院</p>
+                
+                <div class="footer-note type-line">
+                    <p>感谢您的关注与支持</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. 鼠标拖动散落照片特效 (已调淡)
+        // ==========================================
+        const images = [
+            '/static/images/writer1.png',
+            '/static/images/writer2.png',
+            '/static/images/writer3.png',
+            '/static/images/writer4.png',
+            '/static/images/writer5.png'
+        ];
+
+        let throttleTimer;
+
+        document.addEventListener('mousemove', function(e) {
+            if (throttleTimer) return;
+            throttleTimer = setTimeout(() => { throttleTimer = null; }, 50);
+            createDroppedImage(e.pageX, e.pageY);
+        });
+
+        function createDroppedImage(x, y) {
+            const img = document.createElement('img');
+            const randomSrc = images[Math.floor(Math.random() * images.length)];
+            img.src = randomSrc;
+
+            const size = Math.floor(Math.random() * 50) + 30; // 30-80px
+            const offsetX = (Math.random() - 0.5) * 60;
+            const offsetY = (Math.random() - 0.5) * 60;
+            const rotation = (Math.random() - 0.5) * 60;
+            
+            // 【关键修改】透明度调低，让图片更淡
+            // 原来是 0.4~0.9，现在改为 0.15 ~ 0.45
+            const opacity = Math.random() * 0.3 + 0.15; 
+            
+            const duration = Math.floor(Math.random() * 4000) + 1000;
+
+            img.style.position = 'absolute';
+            img.style.left = (x + offsetX) + 'px';
+            img.style.top = (y + offsetY) + 'px';
+            img.style.width = size + 'px';
+            img.style.height = 'auto';
+            img.style.opacity = opacity; // 应用更淡的透明度
+            img.style.transform = `rotate(${rotation}deg)`;
+            img.style.pointerEvents = 'none';
+            img.style.zIndex = '9999';
+            img.style.border = '1px solid rgba(0,0,0,0.3)'; // 边框也稍微淡一点
+
+            img.style.transition = `opacity ${duration}ms ease-out`;
+
+            document.body.appendChild(img);
+
+            setTimeout(() => { img.style.opacity = '0'; }, 50);
+            setTimeout(() => { img.remove(); }, duration + 50);
+        }
+
+        // ==========================================
+        // 2. 打字机文字生成特效
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const lines = document.querySelectorAll('.type-line');
+            
+            // 1. 初始化：先把原本的文字存起来，然后清空内容，设置为隐藏
+            const lineData = [];
+            lines.forEach(line => {
+                // 如果是特殊的 fade-only (比如分割线)，不需要清空文字
+                if (line.classList.contains('fade-only')) {
+                    lineData.push({ element: line, text: '', isFade: true });
+                } else {
+                    // 递归获取所有文本内容，或者直接取 textContent
+                    // 这里简单处理，取 textContent，如果有子标签样式可能会丢失，
+                    // 鉴于你的结构比较简单，innerHTML 转 text 没问题
+                    // 但为了保留 footer-note 里的 <p>，我们只处理最内层的文本节点比较复杂
+                    // 简单方案：直接对元素本身操作
+                    const originalText = line.innerText; // 获取可见文本
+                    lineData.push({ element: line, text: originalText, isFade: false });
+                    
+                    line.innerText = ''; // 清空文字
+                }
+                line.classList.add('type-hidden'); // 初始隐藏
+            });
+
+            // 2. 逐行打印函数
+            async function typeLines() {
+                for (let i = 0; i < lineData.length; i++) {
+                    const item = lineData[i];
+                    const element = item.element;
+                    
+                    // 显示当前元素容器
+                    element.classList.remove('type-hidden');
+                    element.style.opacity = 1;
+
+                    if (item.isFade) {
+                        // 如果是分割线，直接淡入，稍微停顿
+                        element.style.transition = 'opacity 1s ease';
+                        await new Promise(r => setTimeout(r, 500));
+                    } else {
+                        // 如果是文字，开始打字
+                        element.classList.add('typing-cursor'); // 加光标
+                        
+                        const text = item.text;
+                        for (let j = 0; j < text.length; j++) {
+                            element.innerText += text[j];
+                            // 打字速度：随机 30-80ms，模拟真实打字
+                            const speed = Math.random() * 50 + 30;
+                            await new Promise(r => setTimeout(r, speed));
+                        }
+                        
+                        element.classList.remove('typing-cursor'); // 打完一行去掉光标
+                    }
+                    
+                    // 行与行之间的停顿
+                    await new Promise(r => setTimeout(r, 200));
+                }
+            }
+
+            // 稍微延迟一点开始打字，让页面先加载完
+            setTimeout(typeLines, 500);
+        });
+    </script>
+
+</body>
+</html>

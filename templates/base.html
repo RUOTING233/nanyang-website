@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>南洋文献 - 留声南洋</title>
+    <link rel="stylesheet" href="/static/css/exhibition.css">
+
+    <style>
+        /* =========================================
+           1. 字体定义
+           ========================================= */
+        @font-face {
+            font-family: 'MyWebFont';
+            src: url('fonts/MyCustomFont.ttf');
+        }
+
+        body {
+            margin: 0;
+            font-family: 'MyWebFont', sans-serif;
+            background-image: url('/static/images/timeline-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* 导航栏样式 */
+        .main-nav {
+            background-color: rgba(255, 255, 255, 0.9); padding: 10px 0; text-align: center;
+            border-bottom: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .main-nav ul { margin: 0; padding: 0; list-style: none; display: inline-block; }
+        .main-nav li { display: inline-block; margin: 0 15px; }
+        .main-nav a { color: #444; text-decoration: none; font-size: 16px; padding: 10px 0; transition: color 0.3s ease; position: relative; cursor: pointer; }
+        .main-nav a:hover { color: #000; }
+        .main-nav a.active { color: #000; }
+        .main-nav a.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background-color: #CD5C5C; }
+
+
+        /* =========================================
+           2. 核心布局 & 动画定义
+           ========================================= */
+        
+        /* 定义一个“优雅上浮”的动画关键帧 */
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95); /* 初始：向下偏移50px，稍微缩小 */
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1); /* 结束：回到原位，恢复大小 */
+            }
+        }
+
+        .category-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 80px;
+        }
+
+        .category-card {
+            width: 350px;
+            height: 500px;
+            background-color: rgba(255, 255, 255, 0.85);
+            
+            /* 保持您的 dotted 边框 */
+            border: 3px dotted #dcdcdc; 
+            
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            
+            text-decoration: none;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+
+            /* 【新增】应用入场动画 */
+            opacity: 0; /* 初始先隐藏，防止闪烁 */
+            animation: cardEntrance 1s ease-out forwards; /* 1秒完成，forwards表示停在结束状态 */
+        }
+
+        /* 【新增】让第二张卡片晚一点出来 (错落感) */
+        /* nth-child(2) 选中第二个 a 标签 */
+        .category-container a:nth-child(2) {
+            animation-delay: 0.3s; /* 延迟 0.3秒 */
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px); /* 悬停时的上浮效果 */
+            background-color: #fff;
+            box-shadow: 0 15px 35px rgba(205, 92, 92, 0.2);
+            border-color: #CD5C5C;
+        }
+
+        /* =========================================
+           3. 卡片内部文字样式
+           ========================================= */
+        .card-title {
+            font-size: 3rem;
+            color: #333;
+            writing-mode: vertical-rl;
+            letter-spacing: 15px;
+            font-family: 'MyWebFont', serif;
+            font-weight: normal;
+            z-index: 10;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+            transition: color 0.3s;
+        }
+
+        .category-card:hover .card-title {
+            color: #CD5C5C;
+        }
+
+        /* =========================================
+           4. 背景装饰图通用设置
+           ========================================= */
+        .card-bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .card-bg-layer img {
+            mix-blend-mode: multiply; 
+            opacity: 0.15; 
+            transition: all 0.5s ease;
+            filter: grayscale(100%); 
+        }
+
+        .category-card:hover .card-bg-layer img {
+            opacity: 0.25; 
+            transform: scale(1.05); 
+        }
+
+        /* 背景图单独调整 */
+        #bg-creation img {
+            height: 100%;
+            width: auto;
+            transform: rotate(0deg);
+        }
+        
+        .category-card:hover #bg-creation img {
+             transform: scale(1.05) rotate(0deg);
+        }
+
+        #bg-history {
+            flex-direction: row;
+            gap: 20px;
+        }
+        
+        #bg-history img {
+            height: 95%;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* 手机适配 */
+        @media screen and (max-width: 768px) {
+            .category-container {
+                flex-direction: column;
+                gap: 40px;
+                padding-top: 40px;
+            }
+            .category-card {
+                width: 80%;
+                height: 300px;
+                /* 手机上可以稍微快一点 */
+                animation-duration: 0.8s;
+            }
+            .card-title {
+                font-size: 2rem;
+                letter-spacing: 5px;
+            }
+            .main-nav { overflow-x: auto; white-space: nowrap; }
+            .main-nav ul { padding: 0 10px; display: inline-block; min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="main-nav">
+        <ul>
+            <li><a href="/">首页</a></li>
+            <li><a href="exhibition.html">项目介绍</a></li>
+            <li><a href="/archive">南渡纪</a></li>
+            <li><a href="/map">南行图</a></li>
+            <li><a href="/base" class="active">南洋文献</a></li>
+            <li><a href="/end">联系我们</a></li>
+        </ul>
+    </nav>
+
+    <div class="category-container">
+        
+        <a href="/creation" class="category-card">
+            <div class="card-bg-layer" id="bg-creation">
+                <img src="/static/images/writing-bg.png" alt="创作插画">
+            </div>
+            <div class="card-title">南洋创作</div>
+        </a>
+
+        <a href="/materials" class="category-card">
+            <div class="card-bg-layer" id="bg-history">
+                <img src="/static/images/sinchew-header.png" alt="星洲日报">
+                <img src="/static/images/nanyang-header.png" alt="南洋商报">
+            </div>
+            <div class="card-title">南洋史料</div>
+        </a>
+
+    </div>
+
+</body>
+</html>

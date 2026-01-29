@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>留声南洋</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        /* 布局微调 (保持不变) */
+        .content-wrapper h1 { margin-bottom: 15px; margin-top: 0; line-height: 1.2; }
+        .divider { height: 2px; background-color: rgba(255, 255, 255, 0.8); margin: 0 auto 25px auto; border-radius: 2px; }
+        .content-wrapper p { white-space: nowrap; margin: 0; }
+
+        /* 走路贴纸 */
+        #walking-sticker {
+            position: fixed; height: 100vh; height: 100dvh; width: auto; 
+            bottom: 0; left: 0; z-index: 10; pointer-events: none; 
+            transition: transform 10s linear;
+        }
+        .is-walking { transform: translateX(100vw); }
+
+        /* 手机适配 */
+        @media screen and (max-width: 768px) {
+            .content-wrapper { padding: 0 20px; width: 100%; box-sizing: border-box; }
+            .content-wrapper h1 { font-size: 2.8rem; margin-bottom: 15px; }
+            .divider { margin-bottom: 20px; }
+            .content-wrapper p { white-space: normal; line-height: 1.6; font-size: 1.1rem; text-align: center; }
+            #walking-sticker { height: 100vh; height: 100dvh; left: -5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="rain-canvas"></canvas>
+
+    <img src="/static/images/walking-sticker.gif" id="walking-sticker" alt="Walking Figure">
+    
+    <div class="content-wrapper">
+        <h1 id="main-title" class="type-hidden">「 留声南洋 」</h1>
+        <div id="main-divider" class="divider divider-hidden" style="max-width: 120px;"></div>
+        <p id="sub-title" class="type-hidden">战时新马流徙华文女性作家专题数字展厅</p>
+        
+        <a href="exhibition.html" class="button" id="enter-btn">
+            <span id="btn-text" class="button-text type-hidden">进入展厅</span>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // ==========================================
+            // 🌧️ 雨水特效脚本
+            // ==========================================
+            const canvas = document.getElementById('rain-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            // 雨滴数组
+            const drops = [];
+            const maxDrops = window.innerWidth < 768 ? 80 : 150; 
+
+            // 初始化雨滴
+            for (let i = 0; i < maxDrops; i++) {
+                drops.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    length: Math.random() * 20 + 10,
+                    speed: Math.random() * 5 + 5
+                });
+            }
+
+            // 绘制函数
+            function drawRain() {
+                ctx.clearRect(0, 0, width, height);
+                
+                // 【关键修改】调节雨水颜色和透明度
+                // rgba(255, 255, 255, 0.7) -> 0.7 表示 70% 不透明，比之前的 0.4 更明显
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; 
+                
+                ctx.lineWidth = 1;
+                ctx.lineCap = 'round';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const d = drops[i];
+                    ctx.beginPath();
+                    ctx.moveTo(d.x, d.y);
+                    ctx.lineTo(d.x - 1, d.y + d.length); 
+                    ctx.stroke();
+
+                    d.y += d.speed;
+                    d.x -= 0.5;
+
+                    if (d.y > height) {
+                        d.y = -d.length;
+                        d.x = Math.random() * width;
+                    }
+                    if (d.x < 0) {
+                        d.x = width;
+                    }
+                }
+                requestAnimationFrame(drawRain);
+            }
+            
+            drawRain();
+
+            window.addEventListener('resize', () => {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+            });
+
+
+            // ==========================================
+            // 🚶 走路贴纸逻辑 (保持不变)
+            // ==========================================
+            const sticker = document.getElementById('walking-sticker');
+            const button = document.getElementById('enter-btn');
+            let animationHasPlayed = false;
+
+            document.body.addEventListener('click', function(event) {
+                if (button.contains(event.target)) return; 
+                if (!animationHasPlayed && sticker) { 
+                   sticker.classList.add('is-walking');
+                   animationHasPlayed = true;
+                }
+            });
+
+            // ==========================================
+            // ⌨️ 打字机逻辑 (保持不变)
+            // ==========================================
+            const titleEl = document.getElementById('main-title');
+            const dividerEl = document.getElementById('main-divider');
+            const subTitleEl = document.getElementById('sub-title');
+            const btnTextEl = document.getElementById('btn-text');
+            const btnEl = document.getElementById('enter-btn');
+
+            const steps = [
+                { el: titleEl, text: titleEl.innerText.trim(), type: 'text' },
+                { el: dividerEl, type: 'line', width: '120px' }, 
+                { el: subTitleEl, text: subTitleEl.innerText.trim(), type: 'text' },
+                { el: btnTextEl, text: btnTextEl.innerText.trim(), type: 'text' },
+                { el: btnEl, type: 'border' }
+            ];
+
+            steps.forEach(step => {
+                if (step.type === 'text') step.el.innerText = ''; 
+            });
+
+            async function runSequence() {
+                await wait(500);
+                await typeText(steps[0]);
+                await wait(200);
+                await expandLine(steps[1]);
+                await wait(200);
+                await typeText(steps[2]);
+                await wait(200);
+                await typeText(steps[3]);
+                showBorder(steps[4]); 
+            }
+
+            function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+            async function typeText(step) {
+                const el = step.el;
+                const text = step.text;
+                el.classList.remove('type-hidden');
+                el.style.opacity = 1;
+                el.classList.add('typing-cursor');
+                for (let i = 0; i < text.length; i++) {
+                    el.innerText += text[i];
+                    await wait(100); 
+                }
+                el.classList.remove('typing-cursor');
+            }
+
+            function expandLine(step) {
+                return new Promise(resolve => {
+                    step.el.classList.remove('divider-hidden');
+                    step.el.style.width = step.width;
+                    setTimeout(resolve, 800);
+                });
+            }
+
+            function showBorder(step) {
+                step.el.classList.add('button-border-show');
+            }
+
+            runSequence();
+        });
+    </script>
+
+</body>
+</html>

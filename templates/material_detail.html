@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ material.folder_name }} - 史料详情</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/creation.css') }}">
+    <style>
+        /* 针对本页面的微调 */
+        body { background-color: #fdfbf5; }
+
+        /* 标题区 */
+        .detail-header { 
+            text-align: center; 
+            margin-top: 60px; 
+            margin-bottom: 30px; 
+            padding-bottom: 20px; 
+            border-bottom: 2px dashed #CD5C5C; 
+        }
+
+        .detail-header h2 { 
+            font-family: 'MyWebFont', serif; 
+            color: #CD5C5C; 
+            margin: 0; 
+            /* 自动缩放字体 */
+            font-size: clamp(16px, 3vw, 32px);
+            white-space: normal;
+            word-wrap: break-word;
+            max-width: 95%; 
+            margin: 0 auto; 
+            line-height: 1.4;
+        }
+
+        /* 人物小标题样式 */
+        .author-subtitle {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 10px;
+            font-family: 'MyWebFont', serif;
+        }
+
+        /* 【修改】子文件夹区域样式 
+           现在使用 grid 布局，不需要原来的 list 样式了
+        */
+        .sub-folders-container {
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+            /* 如果有子文件夹，给底部加个分割线区分文件区 */
+            border-bottom: 1px dashed #ddd; 
+        }
+        
+        /* 这里的 .material-grid 和 .folder-card 会自动继承 creation.css 里的样式 */
+
+        /* 图片容器 */
+        .zoom-wrapper {
+            transition: transform 0.2s ease-out;
+            transform-origin: top center;
+        }
+
+        /* 图片画廊 */
+        .image-gallery { text-align: center; padding-bottom: 20px; }
+        .gallery-item { margin-bottom: 40px; display: block; }
+        .gallery-item img {
+            max-width: 90%; 
+            height: auto; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+        }
+
+        /* PDF 和 TXT 列表 */
+        .file-list { list-style: none; padding: 0; text-align: left; max-width: 800px; margin: 0 auto; }
+        .file-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; align-items: center; }
+        .file-icon { margin-right: 10px; font-weight: bold; font-size: 1.2em; }
+        .file-link { text-decoration: none; color: #333; flex: 1; }
+        .file-link:hover { color: #CD5C5C; }
+    </style>
+</head>
+<body>
+
+    <a href="javascript:history.back()" class="fixed-back-btn">← 返回</a>
+
+    <div class="library-container" style="max-width: 1200px;">
+        
+        <div class="detail-header">
+            <h2>{{ material.folder_name }} {% if subpath %}/ {{ subpath.split('/')[-1] }}{% endif %}</h2>
+            
+            {% set author_map = {
+                'yingzi': '莹姿',
+                'fengyimei': '冯伊湄',
+                'wangyingxia': '王映霞',
+                'wangying': '王莹',
+                'shenzijiu': '沈兹九'
+            } %}
+            <div class="author-subtitle">—— {{ author_map[material.author] }} ——</div>
+        </div>
+
+        {% if dirs %}
+        <div class="sub-folders-container">
+            <h3 style="text-align: center; color: #888; font-size: 16px; margin-bottom: 20px;">- 子文件夹 -</h3>
+            
+            <div class="material-grid">
+                {% for d in dirs %}
+                    {% set new_path = d if not subpath else subpath + '/' + d %}
+                    <a href="{{ url_for('material_detail', id=material.id, subpath=new_path) }}" class="folder-card">
+                        <div class="folder-name">{{ d }}</div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div id="zoom-container" class="zoom-wrapper">
+            
+            <div class="image-gallery">
+                {% for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png')) %}
+                <div class="gallery-item">
+                    <img src="{{ url_for('static', filename='materials/' + material.author + '/' + material.folder_name + '/' + (subpath + '/' + f if subpath else f)) }}" alt="{{ f }}">
+                </div>
+                {% endfor %}
+            </div>
+
+            <ul class="file-list">
+                {% for f in files if f.lower().endswith(('.pdf', '.txt')) %}
+                <li class="file-item">
+                    <span class="file-icon">
+                        {% if f.endswith('.pdf') %}📄{% else %}📝{% endif %}
+                    </span>
+                    <a href="{{ url_for('static', filename='materials/' + material.author + '/' + material.folder_name + '/' + (subpath + '/' + f if subpath else f)) }}" target="_blank" class="file-link">
+                        {{ f }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+
+            {% if not dirs and not files %}
+                <p style="text-align:center; color:#999; margin-top:50px;">(该文件夹为空)</p>
+            {% endif %}
+
+        </div>
+
+        {% if material.source and material.source != '暂无' %}
+        <div class="source-box">
+            <p><strong>文献来源：</strong> {{ material.source | safe }}</p>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="zoom-controls">
+        <button onclick="zoomIn()" class="zoom-btn" title="放大">+</button>
+        <button onclick="zoomOut()" class="zoom-btn" title="缩小">-</button>
+        <button onclick="zoomReset()" class="zoom-btn reset-btn" title="重置">1:1</button>
+    </div>
+
+    <script>
+        var currentZoom = 1.0;
+        var container = document.getElementById('zoom-container');
+
+        function zoomIn() {
+            currentZoom += 0.1;
+            updateZoom();
+        }
+
+        function zoomOut() {
+            if (currentZoom > 0.2) {
+                currentZoom -= 0.1;
+                updateZoom();
+            }
+        }
+
+        function zoomReset() {
+            currentZoom = 1.0;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            container.style.transform = "scale(" + currentZoom + ")";
+        }
+    </script>
+
+</body>
+</html>

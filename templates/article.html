@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ work.title }} - 南洋创作</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/article.css') }}">
+</head>
+<body>
+
+    <a href="javascript:history.back()" class="fixed-back-btn">← 返回</a>
+
+    <div class="article-container">
+        
+        <header class="article-header">
+            <h1>{{ work.title }}</h1>
+            
+            <div class="meta-info">
+                
+                {% set author_map = {
+                    'yingzi': '莹姿', 
+                    'fengyimei': '冯伊湄', 
+                    'wangyingxia': '王映霞', 
+                    'wangying': '王莹', 
+                    'shenzijiu': '沈兹九'
+                } %}
+                <span class="meta-item author">{{ author_map[work.author] if work.author in author_map else work.author }}</span>
+
+                <span class="meta-item">{{ work.date_display | replace(' 00:00:00', '') }}</span>
+
+                <span class="meta-item">{{ work.genre }}</span>
+
+                {% if work.publication and work.publication != '未知' and work.publication != '' %}
+                <span class="meta-item">{{ work.publication }}</span>
+                {% endif %}
+
+            </div>
+        </header>
+
+        <div class="article-content">
+            
+            <div class="text-content">
+                {{ work.content | default('【暂无录入内容，请在数据库中添加】', true) | safe }}
+            </div>
+            
+            <br><br>
+            
+            <div class="source-box">
+                <p><strong>文献来源：</strong> {{ work.source }}</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

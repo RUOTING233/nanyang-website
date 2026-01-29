@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>南洋史料 - 留声南洋</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/creation.css') }}">
+</head>
+<body>
+
+    <nav class="main-nav">
+        <ul>
+            <li><a href="/">首页</a></li>
+            <li><a href="/exhibition.html">项目介绍</a></li>
+            <li><a href="/archive">南渡纪</a></li>
+            <li><a href="/map">南行图</a></li>
+            <li><a href="/base">南洋文献</a></li>
+            <li><a href="/end">联系我们</a></li>
+        </ul>
+    </nav>
+    
+    <div class="library-container">
+        
+        <h1 class="page-title">南洋史料</h1>
+
+        <div class="search-area">
+            <form action="/materials" method="get" id="filter-form">
+                <div class="search-row-container">
+                    
+                    <select name="author" class="search-select" onchange="this.form.submit()">
+                        <option value="all" style="color:#aaa">涉及人物 (全部)</option>
+                        <option value="yingzi" {% if current_author == 'yingzi' %}selected{% endif %}>莹姿</option>
+                        <option value="fengyimei" {% if current_author == 'fengyimei' %}selected{% endif %}>冯伊湄</option>
+                        <option value="wangyingxia" {% if current_author == 'wangyingxia' %}selected{% endif %}>王映霞</option>
+                        <option value="wangying" {% if current_author == 'wangying' %}selected{% endif %}>王莹</option>
+                        <option value="shenzijiu" {% if current_author == 'shenzijiu' %}selected{% endif %}>沈兹九</option>
+                    </select>
+
+                    <select name="publication" class="search-select" onchange="this.form.submit()">
+                        <option value="all" style="color:#aaa">出版刊物 (全部)</option>
+                        {% for p in available_publications %}
+                        <option value="{{ p }}" {% if current_publication == p %}selected{% endif %}>{{ p }}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+            </form>
+        </div>
+
+        <div class="content-wrapper">
+
+            <div class="result-header">
+                <span class="result-title">—— 检索结果 (共 {{ materials|length }} 条) ——</span>
+            </div>
+
+            <div class="material-grid">
+                {% if materials %}
+                    {% for m in materials %}
+                    <a href="{{ url_for('material_detail', id=m.id) }}" class="folder-card">
+                        <div class="folder-name">{{ m.folder_name }}</div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-result">
+                        没有找到符合条件的史料。
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
