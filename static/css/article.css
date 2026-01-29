@@ -1,0 +1,254 @@
+/* =========================================
+   1. 全局设置 & 字体
+   ========================================= */
+:root {
+    --timeline-color: #CD5C5C;
+    --animation-duration: 3s;
+}
+
+@font-face {
+    font-family: 'MyWebFont';
+    src: url('/static/fonts/MyCustomFont.woff') format('woff'); 
+    font-display: swap; 
+}
+
+/* 核心布局：全屏无滚动，内容在内部滚动 */
+body {
+    margin: 0;
+    font-family: 'MyWebFont', sans-serif;
+    background-image: url('../images/timeline-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 100vh; /* 强制占满一屏 */
+    overflow: hidden; /* 隐藏 Body 滚动条 */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* =========================================
+   🕊️ 鸽子飞翔特效 (大鸽子 + 快速)
+   ========================================= */
+#flying-dove {
+    position: fixed; 
+    top: 50px; left: -200px;    
+    width: 180px; height: auto;
+    animation: flyAcross 6s linear forwards;
+    pointer-events: none; z-index: -1; opacity: 0.9;
+}
+
+@keyframes flyAcross {
+    0% { transform: translate(0, 0) scale(0.6) rotate(-10deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translate(calc(100vw + 300px), 80vh) scale(1) rotate(10deg); opacity: 1; }
+}
+
+/* =========================================
+   2. 导航栏样式 (固定在顶部)
+   ========================================= */
+.main-nav {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 0;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative; 
+    z-index: 1000;
+    flex-shrink: 0; /* 防止导航栏被压缩 */
+}
+.main-nav ul { margin: 0; padding: 0; list-style: none; display: inline-block; }
+.main-nav li { display: inline-block; margin: 0 15px; }
+.main-nav a {
+    color: #444; text-decoration: none; font-size: 16px;
+    padding: 10px 0; transition: color 0.3s ease; position: relative; cursor: pointer;
+}
+.main-nav a:hover, .main-nav a.active { color: #000; }
+.main-nav a.active::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 100%; height: 3px; background-color: #CD5C5C;
+}
+
+/* =========================================
+   3. 页面核心布局 (关键：上下分层，不重叠)
+   ========================================= */
+.page-content {
+    flex: 1; /* 占据导航栏剩下的所有高度 */
+    width: 100%;
+    
+    display: flex;
+    flex-direction: column; /* 上下排列 */
+    align-items: center;    /* 水平居中 */
+    
+    overflow: hidden; /* 防止内容溢出容器 */
+    position: relative;
+}
+
+/* 标题样式：永远在上面，不跟随滚动 */
+.page-title {
+    font-size: 48px;
+    color: #4a4a4a;
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.3);
+    text-align: center;
+    
+    /* 关键：防止被压缩，确位置独立 */
+    flex-shrink: 0; 
+    
+    margin-top: 4vh;
+    margin-bottom: 4vh;
+    width: 100%;
+}
+
+/* =========================================
+   4. 滚动区域 & 时间轴
+   ========================================= */
+
+/* 【核心】这是专门用来滚动的盒子 */
+.timeline-scroll-wrapper {
+    flex: 1;           /* 占据剩下所有高度，直到屏幕底部 */
+    width: 100%;       /* 宽度占满 */
+    
+    /* 开启横向滚动，这就是滑动轴 */
+    overflow-x: auto;  
+    overflow-y: hidden;
+    
+    /* 让内部的时间轴垂直居中 */
+    display: flex;
+    align-items: center; 
+    
+    /* 增加底部内边距，给滚动条留位置，防止挡住文字 */
+    padding-bottom: 20px; 
+}
+
+/* 自定义滚动条 (确保它是显眼的) */
+.timeline-scroll-wrapper::-webkit-scrollbar {
+    height: 10px; /* 高度足够方便点击 */
+}
+.timeline-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(205, 92, 92, 0.6); /* 红色滑块 */
+    border-radius: 5px;
+}
+.timeline-scroll-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.3); /* 轨道 */
+}
+
+/* 时间轴本体 */
+.timeline-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    
+    /* 默认宽度 (电脑端) */
+    width: 80%; 
+    /* 保证内容不被切断的最小高度 */
+    min-height: 300px; 
+    
+    /* 在滚动容器里水平居中 (当不够宽时) */
+    margin: 0 auto; 
+}
+
+/* ... 时间轴细节样式 (保持不变) ... */
+.timeline-bar {
+    width: 100%; height: 3px; background-color: var(--timeline-color); position: relative;
+    animation: unfold var(--animation-duration) ease-out forwards;
+}
+.timeline-bar::after {
+    content: ''; position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
+    width: 0; height: 0; border-left: 12px solid var(--timeline-color);
+    border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+    opacity: 0; animation: fade-in 0.5s forwards; animation-delay: var(--animation-duration);
+}
+@keyframes unfold { from { width: 0%; } to { width: 100%; } }
+
+.timeline-event { position: absolute; top: 50%; transform: translateY(-50%); opacity: 0; animation: fade-in-up 1s forwards; display: flex; justify-content: center; }
+.timeline-year { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: var(--timeline-color); font-size: 20px; white-space: nowrap; }
+.timeline-year.year-black { color: #333; }
+.timeline-dot { width: 10px; height: 10px; background-color: var(--timeline-color); border-radius: 50%; }
+.timeline-dot.large { width: 18px; height: 18px; }
+.timeline-name {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    color: var(--timeline-color); font-size: 22px; text-decoration: none;
+    transition: all 0.3s ease; white-space: nowrap; writing-mode: vertical-rl; padding: 10px 0;
+}
+.timeline-name:hover { transform: translateX(-50%) scale(1.05); text-shadow: 0 0 8px rgba(205, 92, 92, 0.8); }
+.timeline-name.name-top { bottom: 55px; }
+.timeline-name.name-bottom { top: 30px; }
+
+/* 事件具体位置 */
+#event-1931 { left: 0%; animation-delay: calc(var(--animation-duration) * 0.00); }
+#event-1932 { left: 6.79%; animation-delay: calc(var(--animation-duration) * 0.07); }
+#event-1933 { left: 13.57%; animation-delay: calc(var(--animation-duration) * 0.14); }
+#event-1934 { left: 20.36%; animation-delay: calc(var(--animation-duration) * 0.20); }
+#event-1935 { left: 27.14%; animation-delay: calc(var(--animation-duration) * 0.27); }
+#event-1936 { left: 33.93%; animation-delay: calc(var(--animation-duration) * 0.34); }
+#event-1937 { left: 40.71%; animation-delay: calc(var(--animation-duration) * 0.41); }
+#event-1938 { left: 47.50%; animation-delay: calc(var(--animation-duration) * 0.47); }
+#event-1939 { left: 54.29%; animation-delay: calc(var(--animation-duration) * 0.54); }
+#event-1940 { left: 61.07%; animation-delay: calc(var(--animation-duration) * 0.61); }
+#event-1941 { left: 67.86%; animation-delay: calc(var(--animation-duration) * 0.68); }
+#event-1942 { left: 74.64%; animation-delay: calc(var(--animation-duration) * 0.75); }
+#event-1943 { left: 81.43%; animation-delay: calc(var(--animation-duration) * 0.81); }
+#event-1944 { left: 88.21%; animation-delay: calc(var(--animation-duration) * 0.88); }
+#event-1945 { left: 95.00%; animation-delay: calc(var(--animation-duration) * 0.95); }
+
+@keyframes fade-in-up { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* =========================================
+   5. 侧边拉窗 (Side Panels)
+   ========================================= */
+.side-panel {
+    position: fixed; top: 0; right: -500px; width: 500px; height: 100%;
+    background-color: white; box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    z-index: 10001; transition: right 0.4s ease-in-out; overflow-y: auto;
+}
+.side-panel.is-visible { right: 0; }
+.panel-content { width: 100%; height: 100%; background-size: cover; background-position: center; }
+.close-panel-btn {
+    position: absolute; top: 15px; right: 15px; font-size: 30px; color: #aaa;
+    background: none; border: none; cursor: pointer; line-height: 1; padding: 0; z-index: 10;
+}
+.close-panel-btn:hover { color: #333; }
+#yingzi-panel .panel-content { background-image: url('../images/yingzi-profile-bg.jpg'); }
+#fengyimei-panel .panel-content { background-image: url('../images/fengyimei-profile-bg.jpg'); }
+#wangyingxia-panel .panel-content { background-image: url('../images/wangyingxia-profile-bg.jpg'); }
+#wangying-panel .panel-content { background-image: url('../images/wangying-profile-bg.jpg'); }
+#shenzjiu-panel .panel-content { background-image: url('../images/shenzjiu-profile-bg.jpg'); }
+.page-hint {
+    position: fixed; bottom: 20px; right: 30px; background-color: rgba(255, 255, 255, 0.7);
+    color: #555; padding: 5px 15px; border-radius: 15px; font-size: 14px; z-index: 999;
+}
+.page-hint p { margin: 0; }
+
+/* =========================================
+   6. 手机端适配 (强制不重叠)
+   ========================================= */
+@media screen and (max-width: 768px) {
+    .main-nav { overflow-x: auto; white-space: nowrap; flex-shrink: 0; }
+    .main-nav ul { padding: 0 10px; display: inline-block; min-width: 100%; box-sizing: border-box; }
+    
+    .page-title {
+        font-size: 32px;
+        /* 手机端减小间距，但依然保持独立 */
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+
+    /* 滚动容器 */
+    .timeline-scroll-wrapper {
+        align-items: flex-start; /* 手机端靠上一点对齐 */
+        padding-top: 20px; 
+    }
+
+    .timeline-container { 
+        /* 强制宽度撑开，产生滚动条 */
+        width: 200%; 
+        min-width: 800px; 
+        
+        /* 左右留白 */
+        margin-left: 20px; 
+        margin-right: 20px;
+    }
+    
+    .side-panel { width: 85%; right: -85%; }
+}

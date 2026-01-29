@@ -1,0 +1,251 @@
+/* map.css - 南行图专用样式表 */
+
+/* 1. 字体与背景 */
+/* --- 字体定义 (新版 WOFF) --- */
+@font-face {
+    font-family: 'MyWebFont';
+    /* ⚠️如果你文件名不一样，请修改这里 */
+    src: url('/static/fonts/MyCustomFont.woff') format('woff'); 
+    font-display: swap; /* 优化加载体验 */
+}
+
+body { 
+    margin: 0;
+    font-family: 'MyWebFont', sans-serif;
+    background-image: url('../images/timeline-bg.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    overflow: hidden; /* 禁止页面滚动 */
+}
+
+/* 2. 导航栏样式 */
+.main-nav { 
+    background-color: rgba(255, 255, 255, 0.9); 
+    padding: 10px 0; 
+    text-align: center; 
+    border-bottom: 1px solid #ddd; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+    position: sticky; 
+    top: 0; 
+    z-index: 1000; 
+}
+.main-nav ul { margin: 0; padding: 0; list-style: none; display: inline-block; }
+.main-nav li { display: inline-block; margin: 0 15px; }
+.main-nav a { 
+    color: #444; 
+    text-decoration: none; 
+    font-size: 16px; 
+    padding: 10px 0; 
+    transition: color 0.3s ease; 
+    position: relative; 
+    cursor: pointer; 
+}
+.main-nav a:hover { color: #000; }
+.main-nav a.active { color: #000; }
+.main-nav a.active::after { 
+    content: ''; 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 3px; 
+    background-color: #CD5C5C; 
+}
+
+/* 3. 地图容器 */
+.map-section {
+    width: 100%;
+    max-width: 650px; /* 地图框大小 */
+    margin: 10px auto; 
+    position: relative;
+    padding: 20px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.4); 
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible; 
+}
+
+.map-title {
+    text-align: center;
+    font-size: 48px;
+    color: #4a4a4a;
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.5);
+    margin-bottom: 10px; 
+    margin-top: 0;
+    font-weight: bold; 
+}
+
+/* 4. SVG 动画容器 */
+.svg-container {
+    width: 100%;
+    height: auto;
+    position: relative;
+    margin-top: -30px; /* 这里的负数让地图往上提 */
+    
+    /* 渐变遮罩动画 */
+    -webkit-mask-image: linear-gradient(to right, black 50%, transparent 60%);
+    mask-image: linear-gradient(to right, black 50%, transparent 60%);
+    -webkit-mask-size: 300% 100%;
+    mask-size: 300% 100%;
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+    animation: gradientWipe 3.5s ease-out forwards;
+}
+
+@keyframes gradientWipe {
+    0% { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+    100% { -webkit-mask-position: 0% 0; mask-position: 0% 0; }
+}
+
+/* 5. 强制覆盖 SVG 样式 (透明底红线) */
+.svg-container svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    filter: drop-shadow(1px 2px 3px rgba(205, 92, 92, 0.2));
+}
+
+.svg-container svg path,
+.svg-container svg polygon,
+.svg-container svg polyline,
+.svg-container svg rect {
+    fill: rgba(255, 255, 255, 0.0) !important;
+    stroke: #CD5C5C !important;   
+    stroke-width: 1.5px !important; 
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    transition: all 0.3s ease;
+}
+
+.svg-container svg path:hover {
+    fill: rgba(205, 92, 92, 0.1) !important;
+    stroke-width: 2px !important;
+    cursor: pointer;
+}
+
+/* 6. 头像标记点样式 (已缩小) */
+.map-marker {
+    position: absolute;
+    width: 34px;   /* 已缩小 */
+    height: 34px;  /* 已缩小 */
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    background: #fff;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.map-marker img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.map-marker:hover {
+    transform: translate(-50%, -50%) scale(1.4);
+    border-color: #CD5C5C;
+    z-index: 20;
+}
+
+.marker-label {
+    position: absolute;
+    bottom: -24px; /* 标签位置微调 */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #CD5C5C;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.map-marker:hover .marker-label { opacity: 1; }
+
+/* 8. 手机适配 */
+@media screen and (max-width: 768px) {
+    body { overflow: auto; } 
+    .map-marker { width: 32px; height: 32px; }
+    .map-title { font-size: 32px; margin-bottom: 20px; }
+    .main-nav { overflow-x: auto; white-space: nowrap; }
+    .main-nav ul { padding: 0 10px; display: inline-block; min-width: 100%; }
+}
+
+/* =========================================
+   五位作家的具体坐标位置 (你刚才调好的)
+   ========================================= */
+
+/* 1. 莹姿 (永春) */
+#marker-yingzi { 
+    top: 52.4%;    
+    left: 73.1%;   
+    animation-delay: 2.5s; 
+}
+
+/* 2. 王映霞 (厦门) */
+#marker-wang1 { 
+    top: 59%; 
+    left: 73.5%; 
+    animation-delay: 2.7s; 
+}
+
+/* 3. 冯伊湄 (广州) */
+#marker-feng { 
+    top: 57.7%; 
+    left: 65.5%; 
+    animation-delay: 2.9s; 
+}
+
+/* 4. 王莹 (香港) */
+#marker-wang2 { 
+    top: 63.7%; 
+    left: 64.8%; 
+    animation-delay: 3.1s; 
+}
+
+/* 5. 沈兹九 (香港) */
+#marker-shen { 
+    top: 62.9%; 
+    left: 69.4%; 
+    animation-delay: 3.3s; 
+}
+/* map.css 的最底部添加 */
+
+/* 右下角提示文字样式 */
+.page-hint { 
+    position: fixed; 
+    bottom: 20px; 
+    right: 30px; 
+    background-color: rgba(255, 255, 255, 0.7); 
+    color: #555; 
+    padding: 5px 15px; 
+    border-radius: 15px; 
+    font-size: 14px; 
+    z-index: 999; 
+    /* 加一点点阴影，防止地图背景太花看不清字 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    pointer-events: none; /* 让鼠标可以透过文字点击下面的东西，避免遮挡 */
+}
+.page-hint p { margin: 0; }

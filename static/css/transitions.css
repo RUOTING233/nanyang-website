@@ -1,0 +1,21 @@
+/* --- 页面过渡动画 --- */
+
+body {
+    /* 页面载入时播放淡入动画 */
+    animation: pageFadeIn 0.5s ease-in forwards;
+}
+
+body.is-leaving {
+    /* 页面离开时播放淡出动画 */
+    animation: pageFadeOut 0.5s ease-in forwards;
+}
+
+@keyframes pageFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pageFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
