@@ -9,7 +9,7 @@
 /* --- 2. 基础背景设置 --- */
 body {
     /* 建议维持你现有的背景路径，如果之后找不到图再改回 /static/... */
-    background-image: url('../images/background-main.jpg'); 
+    background-image: url('../images/background-main.webp'); 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

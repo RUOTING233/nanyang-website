@@ -31,7 +31,7 @@ body {
 
     /* 【修正】背景图路径：直接找同级的 images 文件夹 */
 
-    background-image: url('../images/2.jpg');
+    background-image: url('../images/2.webp');
 
     background-size: cover;
 

@@ -216,7 +216,7 @@
         <div id="zoom-container" class="zoom-wrapper">
             
             <div class="image-gallery">
-                {% for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png')) %}
+                {% for f in files if f.lower().endswith(('.jpg', '.jpeg', '.webp')) %}
                 <div class="gallery-item">
                     <img loading="lazy" src="{{ url_for('static', filename='materials/' + material.author + '/' + material.folder_name + '/' + (subpath + '/' + f if subpath else f)) }}" alt="{{ f }}">
                 </div>

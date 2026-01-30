@@ -68,7 +68,7 @@ def get_files_in_folder(base_path, sub_path=''):
             dirs.append(item)
         else:
             lower = item.lower()
-            if lower.endswith(('.jpg', '.jpeg', '.png')): jpgs.append(item)
+            if lower.endswith(('.webp', '.jpeg', '.png')): jpgs.append(item)
             elif lower.endswith('.pdf'): pdfs.append(item)
             elif lower.endswith('.txt'): txts.append(item)
             else: others.append(item)
