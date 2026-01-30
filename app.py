@@ -53,7 +53,8 @@ def get_files_in_folder(base_path, sub_path=''):
     if not os.path.exists(full_path):
         return [], []
 
-    dirs, jpgs, pdfs, txts, others = [], [], [], [], []
+    dirs = []
+    all_files = [] # 统一存放所有文件，避免分堆导致排序断层
 
     try:
         items = os.listdir(full_path)
@@ -62,23 +63,27 @@ def get_files_in_folder(base_path, sub_path=''):
 
     for item in items:
         item_path = os.path.join(full_path, item)
-        if item.startswith('.'): continue
+        # 1. 排除隐藏文件
+        if item.startswith('.'): 
+            continue
 
+        # 2. 文件夹和文件分开存放
         if os.path.isdir(item_path):
             dirs.append(item)
         else:
-            lower = item.lower()
-            if lower.endswith(('.webp', '.jpeg', '.png')): jpgs.append(item)
-            elif lower.endswith('.pdf'): pdfs.append(item)
-            elif lower.endswith('.txt'): txts.append(item)
-            else: others.append(item)
+            # 只要是文件，不管后缀是什么（.jpg, .pdf, .txt），全部丢进一个列表
+            # 这样 1.jpg 和 10.jpg 才能在一个列表里根据数字比大小
+            all_files.append(item)
 
+    # 3. 对文件夹进行自然排序
     dirs.sort(key=natural_sort_key)
-    jpgs.sort(key=natural_sort_key)
-    pdfs.sort(key=natural_sort_key)
-    txts.sort(key=natural_sort_key)
+    
+    # 4. 对所有文件进行统一的自然排序
+    # 这一步保证了 1.jpg, 2.pdf, 3.jpg 这种混合排列也是正确的
+    all_files.sort(key=natural_sort_key)
 
-    return dirs, jpgs + pdfs + txts + others
+    # 5. 直接返回，不要再加来加去了
+    return dirs, all_files
 
 @app.template_filter('highlight')
 def highlight_filter(text, keyword):
