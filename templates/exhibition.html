@@ -131,6 +131,9 @@
                         // 等待淡入，如果期间用户点击，下次循环会捕获
                         await new Promise(r => setTimeout(r, 500));
                     } else {
+                        // 【安全措施】开始打字前，先清空内容，防止重复叠加
+                        element.innerText = '';
+                        
                         element.classList.add('typing-cursor'); 
                         
                         const text = item.text;
@@ -157,21 +160,27 @@
             }
 
             // ==========================================
-            // 【核心修改】精准等待字体加载逻辑
+            // 【核心修复】互斥锁逻辑
+            // 确保动画无论如何只运行一次
             // ==========================================
-            let fontLoaded = false;
             
-            // 确保字体加载完毕再运行动画
+            let hasStarted = false; // 这一行是关键
+
+            function startAnimationSafely() {
+                if (hasStarted) return; // 如果已经开始了，就直接拦截
+                hasStarted = true;      // 标记为已开始
+                
+                typeLines();
+            }
+            
+            // 1. 字体加载完毕触发
             document.fonts.ready.then(function() {
-                fontLoaded = true;
-                setTimeout(typeLines, 500);
+                setTimeout(startAnimationSafely, 500);
             });
 
-            // 兜底方案：万一3秒还没好，强制运行
+            // 2. 兜底方案：万一3秒还没好，强制运行
             setTimeout(function() {
-                if (!fontLoaded) {
-                    typeLines();
-                }
+                startAnimationSafely();
             }, 3000);
         });
     </script>
