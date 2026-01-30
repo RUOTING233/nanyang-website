@@ -184,61 +184,36 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-/* --- 找到第 6 部分，修改 .timeline-frame --- */
+/* --- 找到第 6 部分，彻底重写以下两个类 --- */
+.content-wrapper {
+    width: 100%;
+    min-height: 400px;
+    overflow: visible; /* 手机端不要在这里设 auto 滚动，让 iframe 自己控制 */
+}
+
 .timeline-frame {
     width: 100%;
-    /* 删掉原来的 min-width: 1000px; */
-    min-width: 100%; 
-    height: 80vh; /* 使用视口高度，适配不同屏幕 */
+    /* 核心修改：针对手机端，必须给出一个硬性的最小高度，或者使用 vh */
+    height: 70vh; 
+    min-height: 500px; 
     border: none;
     display: block;
+    /* 消除移动端 iframe 的默认边距 */
+    margin: 0;
+    padding: 0;
 }
 
-/* --- 在文件最底部添加手机端适配代码 --- */
+/* --- 针对手机端的布局微调 --- */
 @media screen and (max-width: 768px) {
-    /* 缩小容器边距，给图表留出空间 */
     .library-container {
-        padding: 15px;
+        padding: 15px; /* 减小手机端的内边距，给年表留空间 */
         margin: 10px auto;
-        min-height: auto;
+        width: 95%; /* 撑开容器 */
     }
     
-    /* 让标签栏可以横向滑动 */
-    .author-tabs {
-        overflow-x: auto;
-        justify-content: flex-start;
-        padding-bottom: 5px;
-    }
-    
-    .tab-btn {
-        padding: 8px 15px;
-        font-size: 1rem;
-        flex-shrink: 0;
-    }
-
-    /* 调整 iframe 容器高度 */
     .timeline-frame {
-        height: 60vh;
+        height: 65vh; /* 手机竖屏下稍微调短一点点，防止底部文字被截断 */
     }
-}
-
-.work-line {
-    border-bottom: 1px dashed #ddd;
-    min-width: auto; 
-}
-
-.work-title-link {
-    display: block; padding: 15px 10px; text-decoration: none; color: #444;
-    font-size: 18px; font-family: 'MyWebFont', serif; transition: all 0.2s;
-}
-
-.work-title-link:hover {
-    background-color: #fff; color: #CD5C5C; transform: translateX(5px);
-    border-left: 3px solid #CD5C5C; padding-left: 15px;
-}
-
-.no-result {
-    text-align: center; color: #999; padding: 40px; font-style: italic; font-family: 'MyWebFont', serif;
 }
 
 /* =========================================

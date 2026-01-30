@@ -9,4 +9,23 @@
         if (gd1) Plotly.Plots.resize(gd1);
         if (gd2) Plotly.Plots.resize(gd2);
     });
+</script><script type="text/javascript">
+    // 强制 Plotly 响应式刷新
+    function resizeCharts() {
+        var ids = ["5bdb0945-bfec-4499-8e32-732ec4b65924", "3ea71c83-c006-4fb6-b305-dbec1b5a7498"];
+        ids.forEach(function(id) {
+            var gd = document.getElementById(id);
+            if (gd && window.Plotly) {
+                Plotly.Plots.resize(gd);
+            }
+        });
+    }
+
+    // 1. 页面加载完执行一次
+    window.onload = function() {
+        setTimeout(resizeCharts, 500); // 延迟0.5秒执行，避开手机端渲染卡顿
+    };
+
+    // 2. 窗口变化（如横屏）时执行
+    window.onresize = resizeCharts;
 </script></body></html>
