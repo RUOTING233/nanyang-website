@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>留声南洋</title>
+    
+    <link rel="preload" href="/static/fonts/MyCustomFont.woff2" as="font" type="font/woff2" crossorigin>
+
     <link rel="stylesheet" href="/static/css/style.css">
     
     <style>
@@ -138,8 +141,6 @@
             const btnTextEl = document.getElementById('btn-text');
             const btnEl = document.getElementById('enter-btn');
 
-            // 【修改点 4】不再读取 innerText，而是读取 data-text 属性
-            // 这样页面一开始就是空的，绝对不会有宋体字跳出来
             const steps = [
                 { el: titleEl, text: titleEl.dataset.text, type: 'text' },
                 { el: dividerEl, type: 'line', width: '120px' }, 
@@ -147,8 +148,6 @@
                 { el: btnTextEl, text: btnTextEl.dataset.text, type: 'text' },
                 { el: btnEl, type: 'border' }
             ];
-
-            // 之前的 forEach 清空代码删除了，因为 HTML 已经是空的了
 
             async function runSequence() {
                 await wait(500);
@@ -190,11 +189,29 @@
             }
 
             // ==========================================
-            // 推迟打字机运行时间 (2.5秒)
+            // 【核心修改】精准等待字体加载逻辑
+            // 不再使用 setTimeout 盲猜时间，而是检测字体真正加载完毕
             // ==========================================
+            
+            // 1. 这是一个保险措施：如果浏览器太老不支持检测，就用旧方法延迟
+            let fontLoaded = false;
+            
+            // 2. 只有当浏览器确认所有字体（MyWebFont）加载完毕后，才运行动画
+            document.fonts.ready.then(function() {
+                fontLoaded = true;
+                // 即使字体加载好了，也稍微等 0.5 秒让页面稳定一下
+                setTimeout(runSequence, 500);
+                console.log("字体加载完毕，开始动画");
+            });
+
+            // 3. 兜底方案：万一 fonts.ready 卡住（比如字体文件 404），
+            // 3秒后强制开始，哪怕是宋体也得显示出来，不能一直白屏
             setTimeout(function() {
-                runSequence();
-            }, 2500);
+                if (!fontLoaded) {
+                    console.log("字体加载超时，强制开始");
+                    runSequence();
+                }
+            }, 3000);
             
         });
     </script>

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>项目介绍 - 留声南洋</title>
     
+    <link rel="preload" href="/static/fonts/MyCustomFont.woff2" as="font" type="font/woff2" crossorigin>
+
     <link rel="stylesheet" href="/static/css/exhibition.css">
     
     <style>
@@ -95,8 +97,6 @@
                     // 淡入元素（Next按钮），不需要读取文字，保留原样
                     lineData.push({ element: line, text: '', isFade: true });
                 } else {
-                    // 【核心修改】从 data-text 读取文字，而不是 textContent
-                    // 并且不需要再执行 line.innerText = ''，因为 HTML 已经是空的了
                     const originalText = line.dataset.text || ''; 
                     lineData.push({ element: line, text: originalText, isFade: false });
                 }
@@ -156,9 +156,23 @@
                 }
             }
 
-            // 【核心修改】推迟打字机运行时间
-            // 2500 代表延迟 2.5 秒，确保字体加载完毕再开始打字
-            setTimeout(typeLines, 2500);
+            // ==========================================
+            // 【核心修改】精准等待字体加载逻辑
+            // ==========================================
+            let fontLoaded = false;
+            
+            // 确保字体加载完毕再运行动画
+            document.fonts.ready.then(function() {
+                fontLoaded = true;
+                setTimeout(typeLines, 500);
+            });
+
+            // 兜底方案：万一3秒还没好，强制运行
+            setTimeout(function() {
+                if (!fontLoaded) {
+                    typeLines();
+                }
+            }, 3000);
         });
     </script>
 
