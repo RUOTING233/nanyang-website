@@ -1,0 +1,169 @@
+/* 确保字体定义在最顶端 */
+/* --- 字体定义 (新版 WOFF) --- */
+@font-face {
+    font-family: 'MyWebFont';
+    /* ⚠️如果你文件名不一样，请修改这里 */
+    src: url('/static/fonts/MyCustomFont.woff2') format('woff2'); font-display: block; 
+    font-display: swap; /* 优化加载体验 */
+}
+
+body {
+    background-image: url('../images/background-2.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    /* 确保所有文字都应用您的字体 */
+    font-family: 'MyWebFont', sans-serif;
+}
+
+.main-nav {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 0;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.main-nav ul { 
+    margin: 0; 
+    padding: 0; 
+    list-style: none; 
+}
+
+.main-nav li { 
+    display: inline-block; 
+    margin: 0 15px; 
+}
+
+.main-nav a { 
+    color: #444; 
+    text-decoration: none; 
+    font-size: 16px; 
+    padding: 10px 0; 
+    transition: color 0.3s ease; 
+    position: relative; 
+}
+
+.main-nav a:hover { 
+    color: #000; 
+}
+
+.main-nav a.active { 
+    color: #000; 
+    cursor: default; 
+}
+
+.main-nav a.active::after { 
+    content: ''; 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 3px; 
+    background-color: #CD5C5C; 
+}
+
+.content-card {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 40px 50px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    margin: 100px auto; 
+}
+
+.content-card h2 { 
+    font-size: 36px; 
+    color: #333; 
+    margin-top: 0; 
+    text-align: center; 
+}
+
+.content-card p { 
+    font-size: 18px; 
+    color: #555; 
+    line-height: 1.8; 
+    text-align: justify; 
+}
+
+.navigation-links { 
+    margin-top: 40px; 
+    text-align: center; 
+}
+
+/*
+ * ===============================================
+ * == 在这里修改了 "Next" 按钮的样式 ==
+ * ===============================================
+ */
+.button-primary {
+    display: inline-block;
+    padding: 10px 20px; /* 保留一些内边距，让点击区域更大 */
+    
+    /* 关键修改1：移除背景颜色 */
+    background-color: transparent;
+    
+    /* 关键修改2：将文字颜色改为深色，以便看清 */
+    color: #333;
+    
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+/* 关键修改3：更新悬停效果 */
+.button-primary:hover {
+    color: #000; /* 悬停时颜色加深 */
+    text-decoration: underline; /* 添加下划线作为提示 */
+}
+/* ... (上面是你原来的代码) ... */
+
+/* =========================================
+   打字机特效专用样式
+   ========================================= */
+
+/* 初始状态：隐藏 */
+.type-hidden {
+    opacity: 0;
+}
+
+/* 光标闪烁效果 */
+.typing-cursor::after {
+    content: '|';
+    color: #CD5C5C;
+    margin-left: 2px;
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* 防止打字过程中卡片高度乱跳
+   给容器设一个最小高度 (根据内容量大概估算的) 
+*/
+.content-card {
+    min-height: 600px; 
+}
+/* ... (上面是之前的代码) ... */
+
+/* =========================================
+   新增：名字高亮样式
+   ========================================= */
+.highlight-name {
+    color: #CD5C5C;   /* 您的主题红 */
+    font-weight: bold; /* 加粗 */
+}
+
+/* 确保打字机的光标颜色和高亮文字一致，看起来更协调 */
+.typing-cursor::after {
+    color: #CD5C5C;
+}

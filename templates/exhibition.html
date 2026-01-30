@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目介绍 - 留声南洋</title>
+    
+    <link rel="stylesheet" href="/static/css/exhibition.css">
+    
+    <style>
+        /* 复刻导航栏样式 (保持不变) */
+        .main-nav { 
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 10px 0; 
+            text-align: center; 
+            border-bottom: 1px solid #ddd; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .main-nav ul { 
+            margin: 0; padding: 0; list-style: none; display: inline-block; 
+        }
+        .main-nav li { display: inline-block; margin: 0 15px; }
+        .main-nav a { 
+            color: #444; text-decoration: none; font-size: 16px; padding: 10px 0; 
+            transition: color 0.3s ease; position: relative; cursor: pointer; 
+        }
+        .main-nav a:hover { color: #000; }
+        .main-nav a.active { color: #000; }
+        .main-nav a.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background-color: #CD5C5C; }
+
+        @media screen and (max-width: 768px) {
+            .main-nav { overflow-x: auto; white-space: nowrap; }
+            .main-nav ul { padding: 0 10px; display: inline-block; min-width: 100%; box-sizing: border-box; }
+            .content-card { width: 90% !important; margin: 20px auto !important; padding: 25px 20px !important; box-sizing: border-box; }
+            .content-card p { font-size: 1rem; text-align: justify; line-height: 1.6; }
+            .content-card h2 { font-size: 1.8rem; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="main-nav">
+        <ul>
+            <li><a href="/">首页</a></li>
+            <li><a href="exhibition.html" class="active">项目介绍</a></li>
+            <li><a href="/archive">南渡纪</a></li>
+            <li><a href="/map">南行图</a></li>
+            <li><a href="/base">南洋文献</a></li>
+            <li><a href="/end">联系我们</a></li>
+        </ul>
+    </nav>
+    
+    <div class="content-card">
+        <h2 class="type-line">关于本站</h2>
+        
+        <p class="type-line">
+           本站作为“留声南洋：战时新马流徙华文女性作家文献汇编与研究（1931-1945）”项目的核心研究成果而推出，旨在将十四年抗战时期南下新马的华文女性作家的史料与创作进行数字化整合，构建一个兼具文献保存、研究与展示于一体的专题数字展厅。
+        </p>
+
+        <p>
+            <span class="type-line">本站以“南渡纪”（作家档案）、“南行图”（流徙地图）与“南洋文献”（作品与史料）为核心架构，内容主体聚焦于</span>
+            <span class="type-line highlight-name">莹姿、冯伊湄、王映霞、王莹、沈兹九</span>
+            <span class="type-line">这五位在战时流徙新马的华文女性作家。我们通过跨域式的文献搜集，并对长期散佚于海内外报刊的原始文献进行整理，最终汇编为首部专题文献总集，同时为读者提供可检索的专题文献库。</span>
+        </p>
+
+        <p class="type-line">
+            运用数字人文方法（Digital Humanities）进行研究与呈现是本站的一次跨领域尝试。我们创新性地采用“人机协同”的开发路径，结合Python、Plotly、Folium等技术栈，开发出“交互式创作年表”与“交互式流徙地图”等可视化成果。我们期望通过这种动态的、可交互的视觉呈现方式，将文学、历史、地理等多重信息进行跨学科整合，直观地呈现作家群体的南洋活动轨迹与创作脉络。
+        </p>
+        
+        <p class="type-line">
+           我们诚挚邀请海内外学者一同使用本站的文献资源与可视化工具，共同探索这群女性作家在南洋留下的珍贵声音。
+        </p>
+
+        <div class="navigation-links type-line fade-only">
+            <a href="/archive" class="button-primary">Next</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const lines = document.querySelectorAll('.type-line');
+            let isSkipped = false; // 是否已点击跳过
+
+            // 全局点击监听：一旦点击，就设置跳过标志
+            document.addEventListener('click', function(e) {
+                // 如果点的是导航栏链接，就不触发跳过逻辑（反正页面都要跳转了）
+                if (e.target.closest('a')) return;
+                
+                isSkipped = true;
+            });
+
+            // 初始化
+            const lineData = [];
+            lines.forEach(line => {
+                if (line.classList.contains('fade-only')) {
+                    lineData.push({ element: line, text: '', isFade: true });
+                } else {
+                    const originalText = line.textContent.trim().replace(/\s+/g, ' '); 
+                    lineData.push({ element: line, text: originalText, isFade: false });
+                    line.innerText = ''; 
+                }
+                line.classList.add('type-hidden'); 
+            });
+
+            async function typeLines() {
+                for (let i = 0; i < lineData.length; i++) {
+                    const item = lineData[i];
+                    const element = item.element;
+                    
+                    element.classList.remove('type-hidden');
+                    element.style.opacity = 1;
+
+                    // 【检查跳过】如果在循环开始前已经点击过，直接显示结果
+                    if (isSkipped) {
+                        if (!item.isFade) {
+                            element.innerText = item.text; // 直接填满文字
+                            element.classList.remove('typing-cursor'); // 去掉光标
+                        } else {
+                            // 如果是淡入元素，直接取消动画，瞬间显示
+                            element.style.transition = 'none';
+                        }
+                        // 稍微给个极短的延时防止浏览器渲染卡顿，然后直接进下一次循环
+                        await new Promise(r => setTimeout(r, 0));
+                        continue; 
+                    }
+
+                    // 正常动画逻辑
+                    if (item.isFade) {
+                        element.style.transition = 'opacity 1s ease';
+                        // 等待淡入，如果期间用户点击，下次循环会捕获
+                        await new Promise(r => setTimeout(r, 500));
+                    } else {
+                        element.classList.add('typing-cursor'); 
+                        
+                        const text = item.text;
+                        for (let j = 0; j < text.length; j++) {
+                            // 【检查跳过】打字过程中如果点击
+                            if (isSkipped) {
+                                element.innerText = text; // 直接打完这一整行
+                                break; // 退出打字循环
+                            }
+                            
+                            element.innerText += text[j];
+                            const speed = Math.random() * 30 + 30; 
+                            await new Promise(r => setTimeout(r, speed));
+                        }
+                        
+                        element.classList.remove('typing-cursor');
+                    }
+                    
+                    // 段落间停顿，如果跳过则不停顿
+                    if (!isSkipped) {
+                        await new Promise(r => setTimeout(r, 300));
+                    }
+                }
+            }
+
+            // 稍微延迟开始
+            setTimeout(typeLines, 300);
+        });
+    </script>
+
+</body>
+</html>

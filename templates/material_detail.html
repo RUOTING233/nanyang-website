@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ material.folder_name }} - 史料详情</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/creation.css') }}">
+    
+    <style>
+        /* 1. 字体定义 */
+        @font-face {
+            font-family: 'MyWebFont';
+            src: url('/static/fonts/MyCustomFont.woff2') format('woff2'); font-display: block;
+            font-display: swap;
+        }
+
+        /* 2. 全局重置 (防止首页样式干扰) */
+        body { 
+            background-color: #fdfbf5 !important; /* 米色护眼背景 */
+            background-image: none !important;    /* 强制去掉可能存在的背景图 */
+            min-height: 100vh;
+            overflow-y: auto !important;          /* 允许滚动 */
+            font-family: "SimSun", "Songti SC", serif;
+            color: #333;
+        }
+
+        /* 3. 标题区 */
+        .detail-header { 
+            text-align: center; 
+            margin-top: 60px; 
+            margin-bottom: 30px; 
+            padding-bottom: 20px; 
+            border-bottom: 2px dashed #CD5C5C; 
+        }
+
+        .detail-header h2 { 
+            font-family: 'MyWebFont', serif !important; 
+            color: #CD5C5C; 
+            margin: 0; 
+            font-size: clamp(20px, 4vw, 36px); /* 稍微调大了一点 */
+            white-space: normal;
+            word-wrap: break-word;
+            max-width: 95%; 
+            margin: 0 auto; 
+            line-height: 1.4;
+            text-shadow: none !important; /* 去掉阴影 */
+        }
+
+        /* 人物小标题 */
+        .author-subtitle {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 15px;
+            font-family: 'MyWebFont', serif !important;
+        }
+
+        /* 4. 子文件夹区域 */
+        .sub-folders-container {
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #ddd; 
+        }
+
+        /* 5. 图片画廊 */
+        .image-gallery { 
+            text-align: center; 
+            padding-bottom: 20px; 
+        }
+        .gallery-item { 
+            margin-bottom: 40px; 
+            display: block; 
+        }
+        .gallery-item img {
+            max-width: 95%; 
+            height: auto; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 柔和的阴影 */
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        /* 6. 文件列表 (PDF/TXT) */
+        .file-list { 
+            list-style: none; 
+            padding: 0; 
+            text-align: left; 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        .file-item { 
+            padding: 15px; 
+            border-bottom: 1px solid #eee; 
+            display: flex; 
+            align-items: center; 
+            transition: background 0.2s;
+        }
+        .file-item:hover {
+            background-color: rgba(205, 92, 92, 0.05);
+        }
+        .file-icon { margin-right: 15px; font-size: 1.4em; }
+        .file-link { 
+            text-decoration: none; 
+            color: #333; 
+            flex: 1; 
+            font-size: 1.1em;
+            font-family: "SimSun", serif;
+        }
+        .file-link:hover { color: #CD5C5C; }
+
+        /* 7. 底部来源 (核心修复：强制宋体) */
+        .source-box {
+            margin-top: 60px;
+            padding: 20px;
+            background-color: rgba(0,0,0,0.03);
+            border-left: 4px solid #999;
+            margin-bottom: 40px;
+        }
+
+        /* 强制覆盖内部 p 标签样式 */
+        .source-box p {
+            margin: 0;
+            font-family: "SimSun", "Songti SC", serif !important;
+            font-size: 15px !important;
+            color: #555 !important;
+            line-height: 1.6 !important;
+            text-shadow: none !important;
+        }
+        
+        /* 缩放控制按钮 */
+        .zoom-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .zoom-btn:hover {
+            background: #CD5C5C;
+            color: white;
+        }
+        .reset-btn { font-size: 12px; font-weight: bold; }
+        
+        /* 返回按钮 */
+        .fixed-back-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            color: #CD5C5C !important;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(255,255,255,0.95) !important;
+            padding: 8px 20px;
+            border: 1px solid #CD5C5C !important;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-family: 'MyWebFont', serif !important;
+            z-index: 1000;
+        }
+        .fixed-back-btn:hover {
+            background: #CD5C5C !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="javascript:history.back()" class="fixed-back-btn">← 返回</a>
+
+    <div class="library-container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        
+        <div class="detail-header">
+            <h2>{{ material.folder_name }} {% if subpath %}/ {{ subpath.split('/')[-1] }}{% endif %}</h2>
+            
+            {% set author_map = {
+                'yingzi': '莹姿',
+                'fengyimei': '冯伊湄',
+                'wangyingxia': '王映霞',
+                'wangying': '王莹',
+                'shenzijiu': '沈兹九'
+            } %}
+            <div class="author-subtitle">—— {{ author_map[material.author] if material.author in author_map else material.author }} ——</div>
+        </div>
+
+        {% if dirs %}
+        <div class="sub-folders-container">
+            <h3 style="text-align: center; color: #aaa; font-size: 14px; margin-bottom: 20px; font-family: sans-serif;">- 子文件夹 -</h3>
+            
+            <div class="material-grid">
+                {% for d in dirs %}
+                    {% set new_path = d if not subpath else subpath + '/' + d %}
+                    <a href="{{ url_for('material_detail', id=material.id, subpath=new_path) }}" class="folder-card" style="text-decoration: none; display: inline-block; margin: 10px; padding: 15px 25px; border: 1px solid #ddd; border-radius: 5px; color: #555; background: #fff;">
+                        <span class="folder-icon">📂</span> 
+                        <span class="folder-name">{{ d }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div id="zoom-container" class="zoom-wrapper">
+            
+            <div class="image-gallery">
+                {% for f in files if f.lower().endswith(('.jpg', '.jpeg', '.png')) %}
+                <div class="gallery-item">
+                    <img loading="lazy" src="{{ url_for('static', filename='materials/' + material.author + '/' + material.folder_name + '/' + (subpath + '/' + f if subpath else f)) }}" alt="{{ f }}">
+                </div>
+                {% endfor %}
+            </div>
+
+            <ul class="file-list">
+                {% for f in files if f.lower().endswith(('.pdf', '.txt')) %}
+                <li class="file-item">
+                    <span class="file-icon">
+                        {% if f.endswith('.pdf') %}📄{% else %}📝{% endif %}
+                    </span>
+                    <a href="{{ url_for('static', filename='materials/' + material.author + '/' + material.folder_name + '/' + (subpath + '/' + f if subpath else f)) }}" target="_blank" class="file-link">
+                        {{ f }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+
+            {% if not dirs and not files %}
+                <p style="text-align:center; color:#999; margin-top:50px;">(该文件夹为空)</p>
+            {% endif %}
+
+        </div>
+
+        {% if material.source and material.source != '暂无' %}
+        <div class="source-box">
+            <p><strong>文献来源：</strong> {{ material.source | safe }}</p>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="zoom-controls">
+        <button onclick="zoomIn()" class="zoom-btn" title="放大">+</button>
+        <button onclick="zoomOut()" class="zoom-btn" title="缩小">-</button>
+        <button onclick="zoomReset()" class="zoom-btn reset-btn" title="重置">1:1</button>
+    </div>
+
+    <script>
+        var currentZoom = 1.0;
+        var container = document.getElementById('zoom-container');
+
+        function zoomIn() {
+            currentZoom += 0.1;
+            updateZoom();
+        }
+
+        function zoomOut() {
+            if (currentZoom > 0.2) {
+                currentZoom -= 0.1;
+                updateZoom();
+            }
+        }
+
+        function zoomReset() {
+            currentZoom = 1.0;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            container.style.transform = "scale(" + currentZoom + ")";
+        }
+    </script>
+
+</body>
+</html>

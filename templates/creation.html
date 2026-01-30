@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>南洋创作</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/creation.css') }}">
+    <script>
+        function toggleSearch() {
+            var basic = document.getElementById('basic-search-mode');
+            var adv = document.getElementById('adv-search-mode');
+            if (basic.style.display !== 'none') {
+                basic.style.display = 'none';
+                adv.style.display = 'flex';
+            } else {
+                basic.style.display = 'flex';
+                adv.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <nav class="main-nav">
+        <ul>
+            <li><a href="/">首页</a></li>
+            <li><a href="/exhibition.html">项目介绍</a></li>
+            <li><a href="/archive">南渡纪</a></li>
+            <li><a href="/map">南行图</a></li>
+            <li><a href="/base">南洋文献</a></li>
+            <li><a href="/end">联系我们</a></li>
+        </ul>
+    </nav>
+    
+    <div class="library-container">
+        
+        <h1 class="page-title">南洋创作</h1>
+
+        <div class="search-area">
+            
+            <form action="/creation" method="get" id="basic-search-form">
+                <div id="basic-search-mode" class="search-row-container">
+                    
+                    <input type="hidden" name="mode" value="search">
+
+                    <select name="author" class="search-select">
+                        <option value="all" style="color:#aaa">作家 (全部)</option>
+                        
+                        <option value="yingzi" {% if request.args.get('mode') == 'search' and current_author == 'yingzi' %}selected{% endif %}>莹姿</option>
+                        
+                        <option value="fengyimei" {% if request.args.get('mode') == 'search' and current_author == 'fengyimei' %}selected{% endif %}>冯伊湄</option>
+                        
+                        <option value="wangyingxia" {% if request.args.get('mode') == 'search' and current_author == 'wangyingxia' %}selected{% endif %}>王映霞</option>
+                        
+                        <option value="wangying" {% if request.args.get('mode') == 'search' and current_author == 'wangying' %}selected{% endif %}>王莹</option>
+                        
+                        <option value="shenzijiu" {% if request.args.get('mode') == 'search' and current_author == 'shenzijiu' %}selected{% endif %}>沈兹九</option>
+                    </select>
+
+                    <select name="year" class="search-select">
+                        <option value="all" style="color:#aaa">年份 (全部)</option>
+                        {% for y in available_years %}
+                        <option value="{{ y }}" {% if current_year == y|string %}selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                        <option value="unknown" {% if current_year == 'unknown' %}selected{% endif %}>未知</option>
+                    </select>
+
+                    <select name="genre" class="search-select">
+                        <option value="all" style="color:#aaa">文类 (全部)</option>
+                        <option value="新体诗" {% if current_genre=='新体诗' %}selected{% endif %}>新体诗</option>
+                        <option value="旧体诗" {% if current_genre=='旧体诗' %}selected{% endif %}>旧体诗</option>
+                        <option value="散文" {% if current_genre=='散文' %}selected{% endif %}>散文</option>
+                        <option value="戏剧" {% if current_genre=='戏剧' %}selected{% endif %}>戏剧</option>
+                        <option value="小说" {% if current_genre=='小说' %}selected{% endif %}>小说</option>
+                        <option value="歌词" {% if current_genre=='歌词' %}selected{% endif %}>歌词</option>
+                    </select>
+                    
+                    <button type="submit" class="search-btn">搜 索</button>
+
+                    <span class="advanced-link" onclick="toggleSearch()">高级检索 &lt;&lt;</span>
+                </div>
+            </form>
+
+            <form action="/creation" method="get" id="adv-search-mode" style="display: none;">
+                <div class="search-row-container">
+                    <input type="hidden" name="mode" value="search">
+                    <input type="hidden" name="author" value="{{ current_author }}">
+                    <input type="text" name="q" value="{{ keyword }}" placeholder="输入标题或正文关键词..." class="advanced-input">
+                    <button type="submit" class="search-btn">搜 索</button>
+                    <span class="advanced-link" onclick="toggleSearch()">返回筛选 &gt;&gt;</span>
+                </div>
+            </form>
+        </div>
+
+        <div class="content-wrapper">
+
+            {% set is_search_mode = (request.args.get('mode') == 'search') %}
+
+            {% if is_search_mode %}
+                
+                <div class="result-header">
+                    <a href="/creation" class="inline-back-btn">← 返回</a>
+                    <span class="result-title">—— 检索结果 (共 {{ works|length }} 条) ——</span>
+                </div>
+
+                {% if works %}
+                    {% for work in works %}
+                    <div class="work-line">
+                        <a href="{{ url_for('article', work_id=work.id) }}" class="work-title-link">
+                            {{ work.title | highlight(keyword) | safe }}
+                        </a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-result">未找到相关文章，请尝试其他关键词。</div>
+                {% endif %}
+
+            {% else %}
+                
+                <div class="author-tabs">
+                    <a href="{{ url_for('creation', author='yingzi') }}" class="tab-btn {{ 'active' if current_author == 'yingzi' }}">莹姿</a>
+                    <a href="{{ url_for('creation', author='fengyimei') }}" class="tab-btn {{ 'active' if current_author == 'fengyimei' }}">冯伊湄</a>
+                    <a href="{{ url_for('creation', author='wangyingxia') }}" class="tab-btn {{ 'active' if current_author == 'wangyingxia' }}">王映霞</a>
+                    <a href="{{ url_for('creation', author='wangying') }}" class="tab-btn {{ 'active' if current_author == 'wangying' }}">王莹</a>
+                    <a href="{{ url_for('creation', author='shenzijiu') }}" class="tab-btn {{ 'active' if current_author == 'shenzijiu' }}">沈兹九</a>
+                </div>
+
+                {% if current_author == 'yingzi' or current_author == 'all' %}
+                    <iframe src="/yingzi-work-timeline" class="timeline-frame" scrolling="yes"></iframe>
+                {% elif current_author == 'fengyimei' %}
+                    <div class="no-result"><p>【冯伊湄书写系年表】制作中...</p></div>
+                {% elif current_author == 'wangyingxia' %}
+                    <div class="no-result"><p>【王映霞书写系年表】制作中...</p></div>
+                {% elif current_author == 'wangying' %}
+                    <div class="no-result"><p>【王莹书写系年表】制作中...</p></div>
+                {% elif current_author == 'shenzijiu' %}
+                    <div class="no-result"><p>【沈兹九书写系年表】制作中...</p></div>
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</body>
+</html>

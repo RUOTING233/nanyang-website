@@ -1,0 +1,139 @@
+/* =========================================
+   1. 字体定义
+   ========================================= */
+@font-face {
+    font-family: 'MyWebFont';
+    /* 确保这里是你的 woff 文件 */
+    src: url('/static/fonts/MyCustomFont.woff2') format('woff2'); font-display: block; 
+    font-display: swap;
+}
+
+/* 全局默认用宋体 (适合正文阅读) */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "SimSun", "Songti SC", serif; /* 宋体 */
+    color: #333;
+    line-height: 1.8;
+    
+    /* 背景图 */
+    background-image: url('/static/images/timeline-bg.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    min-height: 100vh;
+}
+
+/* =========================================
+   2. 左上角返回按钮 (您的字体)
+   ========================================= */
+.fixed-back-btn {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    color: #CD5C5C;
+    text-decoration: none;
+    font-weight: bold;
+    background: rgba(255,255,255,0.95);
+    padding: 8px 20px;
+    border: 1px solid #CD5C5C;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    z-index: 1000;
+    
+    /* 【关键】使用您的自定义字体 */
+    font-family: 'MyWebFont', serif;
+}
+
+.fixed-back-btn:hover {
+    background: #CD5C5C;
+    color: white;
+}
+
+/* =========================================
+   3. 文章容器
+   ========================================= */
+.article-container {
+    max-width: 800px;
+    margin: 60px auto;
+    background-color: rgba(253, 251, 245, 0.96); /* 米色纸张 */
+    padding: 60px 80px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    min-height: 80vh;
+}
+
+/* =========================================
+   4. 头部信息 (标题和小标题)
+   ========================================= */
+.article-header {
+    border-bottom: 2px solid #CD5C5C;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+/* 大标题 (您的字体) */
+.article-header h1 {
+    font-family: 'MyWebFont', serif; /* 【关键】 */
+    font-size: 2.5em; /* 字大一点好看 */
+    margin: 0 0 20px 0;
+    color: #111;
+    font-weight: normal; /* 自定义字体通常不需要加粗 */
+}
+
+/* 小标题信息 (您的字体) */
+.meta-info {
+    font-family: 'MyWebFont', serif; /* 【关键】 */
+    color: #666;
+    font-size: 1.1em; /* 稍微大一点，因为手写体可能偏小 */
+}
+
+.meta-item {
+    display: inline-block;
+    margin: 0 10px;
+}
+/* 分隔符 */
+.meta-item:not(:last-child)::after {
+    content: "·";
+    margin-left: 20px;
+    color: #ccc;
+}
+
+/* =========================================
+   5. 正文内容 (保持宋体)
+   ========================================= */
+.text-content {
+    font-family: "SimSun", "Songti SC", serif; /* 宋体 */
+    font-size: 1.2em;
+    text-align: justify;
+    color: #222;
+}
+
+.text-content p {
+    margin-bottom: 1.5em;
+    text-indent: 2em;
+}
+
+/* =========================================
+   6. 底部来源 (宋体)
+   ========================================= */
+.source-box {
+    margin-top: 60px;
+    padding: 15px;
+    background-color: rgba(0,0,0,0.03);
+    border-left: 4px solid #999;
+    color: #555;
+    font-size: 0.9em;
+    font-family: "SimSun", serif;
+}
+
+.source-box p { margin: 0; }
+
+/* 手机适配 */
+@media screen and (max-width: 768px) {
+    .article-container { margin: 20px; padding: 30px; }
+    .fixed-back-btn { top: 15px; left: 15px; font-size: 14px; }
+}

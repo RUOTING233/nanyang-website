@@ -1,0 +1,186 @@
+/* =========================================
+   1. 全局设置 & 字体
+   ========================================= */
+@font-face {
+    font-family: 'MyWebFont';
+    src: url('/static/fonts/MyCustomFont.woff2') format('woff2'); font-display: block; 
+    font-display: swap; 
+}
+
+* { box-sizing: border-box; }
+
+body { 
+    margin: 0;
+    padding: 0;
+    font-family: 'MyWebFont', "Microsoft YaHei", sans-serif;
+    
+    /* 背景图 */
+    background-image: url('/static/images/3.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    
+    overflow-y: scroll; 
+    overflow-x: hidden;
+}
+
+/* =========================================
+   2. 导航栏样式 (修复：显示滚动条)
+   ========================================= */
+.main-nav { 
+    background-color: rgba(255, 255, 255, 0.9); 
+    padding: 10px 0; 
+    text-align: center; 
+    border-bottom: 1px solid #ddd; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+    position: sticky; 
+    top: 0; 
+    z-index: 1000; 
+    width: 100%;
+
+    /* 1. 强制不换行：这是“在一行”的关键 */
+    white-space: nowrap;
+    
+    /* 2. 允许横向滚动 */
+    overflow-x: auto;
+}
+
+/* 🔥🔥🔥 删除了之前隐藏滚动条的代码 🔥🔥🔥
+   现在滚动条会自动显示出来
+*/
+
+.main-nav ul { 
+    margin: 0; 
+    padding: 0; 
+    list-style: none; 
+    display: inline-block; 
+    /* 确保宽度足够 */
+    min-width: 100%;
+    /* 增加左右内边距，防止第一个和最后一个字贴边 */
+    padding: 0 10px;
+}
+
+.main-nav li { 
+    display: inline-block; 
+    margin: 0 15px; 
+}
+
+.main-nav a { 
+    color: #444; 
+    text-decoration: none; 
+    font-size: 16px; 
+    padding: 10px 0; 
+    transition: color 0.3s ease; 
+    position: relative; 
+    cursor: pointer; 
+}
+
+.main-nav a:hover { color: #000; }
+.main-nav a.active { color: #000; }
+
+.main-nav a.active::after { 
+    content: ''; 
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; 
+    background-color: #CD5C5C; 
+}
+
+/* =========================================
+   3. 中间联系框布局
+   ========================================= */
+.contact-container {
+    min-height: 80vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.contact-box {
+    width: 420px;
+    max-width: 100%;
+    padding: 50px 40px;
+    background-color: rgba(253, 251, 245, 0.95); 
+    border: 4px double #5d4e4e; 
+    border-radius: 4px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    text-align: center;
+    color: #444;
+    font-family: 'MyWebFont', serif; 
+    position: relative;
+    overflow: hidden;   
+}
+
+.contact-bg-layer {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 0; pointer-events: none; 
+}
+
+.contact-bg-layer img {
+    width: auto; height: auto;
+    max-width: 85%; max-height: 85%;
+    object-fit: contain; opacity: 0.25; 
+}
+
+.contact-content { position: relative; z-index: 1; }
+
+.contact-box h1 {
+    font-size: 2.2rem; margin: 0 0 20px 0;
+    color: #CD5C5C; font-weight: normal; letter-spacing: 5px;
+}
+
+.divider {
+    height: 1px; width: 60px; background-color: #CD5C5C; 
+    margin: 0 auto 30px auto;
+}
+
+.contact-box p {
+    font-size: 1.1rem; line-height: 1.6; margin: 6px 0;
+}
+
+.contact-info {
+    font-weight: bold; color: #2c2c2c; margin-top: 15px; 
+    font-size: 1.1rem;
+}
+
+.footer-note {
+    margin-top: 30px; font-size: 0.9rem; color: #888; 
+    border-top: 1px dashed #ccc; padding-top: 15px;
+}
+
+@media screen and (max-width: 768px) {
+    .contact-box { padding: 30px 20px; }
+    .contact-box h1 { font-size: 1.8rem; }
+}
+/* ... (上面是你原来的代码) ... */
+
+/* =========================================
+   4. 打字机特效专用样式
+   ========================================= */
+
+/* 初始状态：让所有要打字的行先隐藏 */
+.type-hidden {
+    opacity: 0; /* 完全透明 */
+}
+
+/* 打字过程中的光标闪烁效果 */
+.typing-cursor::after {
+    content: '|';
+    color: #CD5C5C;
+    margin-left: 5px;
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* 确保内容区域的高度被撑开，防止打字时高度跳动 */
+.contact-content {
+    min-height: 400px; /* 根据内容多少大概估算一个高度 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 居中对齐 */
+}
