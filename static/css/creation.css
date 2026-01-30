@@ -191,28 +191,48 @@ body {
     overflow: visible; /* 手机端不要在这里设 auto 滚动，让 iframe 自己控制 */
 }
 
-.timeline-frame {
+/* =========================================
+   6. 内容展示区 (修正版：确保手机端也能渲染)
+   ========================================= */
+.content-wrapper {
     width: 100%;
-    /* 核心修改：针对手机端，必须给出一个硬性的最小高度，或者使用 vh */
-    height: 70vh; 
-    min-height: 500px; 
-    border: none;
-    display: block;
-    /* 消除移动端 iframe 的默认边距 */
-    margin: 0;
-    padding: 0;
+    min-height: 400px;
+    /* 核心点：在手机端如果内容太宽，允许横向滚动，防止 Plotly 崩溃 */
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch;
 }
 
-/* --- 针对手机端的布局微调 --- */
+.timeline-frame {
+    width: 100%;
+    /* 恢复到 1000px，这能给 Plotly 足够的“心理空间”去渲染点和线 */
+    min-width: 1000px; 
+    height: 1000px;
+    border: none;
+    display: block;
+    overflow: hidden;
+}
+
+/* --- 针对手机端的响应式适配 --- */
 @media screen and (max-width: 768px) {
     .library-container {
-        padding: 15px; /* 减小手机端的内边距，给年表留空间 */
-        margin: 10px auto;
-        width: 95%; /* 撑开容器 */
+        padding: 10px !important; 
+        margin: 5px auto !important;
+        width: 100% !important;
+        box-sizing: border-box;
     }
-    
+
+    .content-wrapper {
+        /* 手机端必须开启横向滚动条，否则 1000px 的图会被切断 */
+        overflow-x: scroll !important; 
+    }
+
     .timeline-frame {
-        height: 65vh; /* 手机竖屏下稍微调短一点点，防止底部文字被截断 */
+        /* 手机端也要强制维持 1000px 宽度，欺骗脚本让它以为在平板/电脑上 */
+        min-width: 1000px !important; 
+        height: 600px !important; /* 手机端高度可适当调低，方便用户操作 */
+        /* 下面两行能让图在手机上显示更清晰 */
+        transform-origin: top left;
+        display: block;
     }
 }
 
