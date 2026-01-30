@@ -1,11 +1,14 @@
-/* --- 字体定义 --- */
+/* --- 1. 字体定义 (确认已开启 block 模式，防止字体跳变) --- */
 @font-face {
     font-family: 'MyWebFont';
-    src: url('/static/fonts/MyCustomFont.woff2') format('woff2'); font-display: block; 
-    font-display: block; 
+    /* 这一行确保了：没加载完字体前，文字是透明的，不会显示宋体 */
+    src: url('/static/fonts/MyCustomFont.woff2') format('woff2');
+    font-display: block;
 }
 
+/* --- 2. 基础背景设置 --- */
 body {
+    /* 建议维持你现有的背景路径，如果之后找不到图再改回 /static/... */
     background-image: url('../images/background-main.jpg'); 
     background-size: cover;
     background-position: center;
@@ -19,6 +22,7 @@ body {
     overflow: hidden;
 }
 
+/* --- 3. 走路贴纸 --- */
 #walking-sticker {
     position: absolute;
     bottom: 0;
@@ -34,43 +38,61 @@ body {
     transform: translateX(120vw);
 }
 
+/* --- 4. 内容容器 --- */
 .content-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center; 
+    /* 增加宽度限制，防止手机上文字太靠边 */
+    width: 95%;
     max-width: 800px;
     position: relative;
     z-index: 20;
     text-align: center; 
 }
 
-/* 标题样式 */
+/* --- 5. 标题样式 (核心修改) --- */
 h1 {
-    font-size: 4.5rem; 
     color: white;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
     margin: 0; 
     letter-spacing: 2px;
+    
+    /* 【修改点 A】强制不换行 */
+    white-space: nowrap;
+    
+    /* 【修改点 B】智能缩放字体 
+       解析：最小 2rem，正常情况下是屏幕宽度的 10% (10vw)，最大不超过 4.5rem。
+       这样手机上会自动变小，电脑上会变大。
+    */
+    font-size: clamp(2rem, 10vw, 4.5rem);
 }
 
-/* 副标题样式 */
+/* --- 6. 副标题样式 (核心修改) --- */
 p {
-    font-size: 1.6rem; 
     color: white; 
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
     margin-top: 0;
     letter-spacing: 2px; 
     line-height: 1.6;
     font-weight: bold; 
+    
+    /* 【修改点 C】强制不换行 */
+    white-space: nowrap;
+    
+    /* 【修改点 D】智能缩放字体 
+       解析：最小 1rem，正常情况下是屏幕宽度的 4% (4vw)，最大不超过 1.6rem。
+       彻底解决了手机上文字因为太长而折行的问题。
+    */
+    font-size: clamp(0.9rem, 4vw, 1.6rem);
 }
 
 /* =========================================
-   打字机与按钮样式 (新版)
+   打字机与按钮样式 (保持原样)
    ========================================= */
 
-/* 1. 基础隐藏与光标 */
 .type-hidden {
-    opacity: 0; /* 配合 JS 控制显示/隐藏 */
+    opacity: 0; 
 }
 .typing-cursor::after {
     content: '|';
@@ -83,54 +105,44 @@ p {
     50% { opacity: 0; }
 }
 
-/* 2. 中间大横线 */
 .divider-hidden {
     width: 0 !important;
     opacity: 1; 
 }
 
-/* 3. 【核心修改】按钮容器 */
 .button {
     margin-top: 45px;
     text-decoration: none;
-    display: inline-block; /* 恢复为块级显示，为了撑开边框 */
+    display: inline-block; 
     cursor: pointer;
-    
-    /* 关键设置：初始边框是透明的，看不见 */
     border: 1px solid transparent; 
-    border-radius: 30px;       /* 圆角边框 */
-    padding: 10px 35px;        /* 按钮内边距 */
-    background-color: transparent; /* 无背景 */
-    
-    /* 动画过渡：边框颜色变化耗时 0.5s */
+    border-radius: 30px;      
+    padding: 10px 35px;       
+    background-color: transparent; 
     transition: all 0.5s ease;
 }
 
-/* 4. 当 JS 加上这个类时，边框显形 */
 .button-border-show {
     border-color: white !important;
-    background-color: rgba(255, 255, 255, 0.1); /* 可选：出现边框时给一点点淡淡的背景 */
+    background-color: rgba(255, 255, 255, 0.1); 
 }
 
-/* 5. 按钮文字 (改小了) */
 .button-text {
-    font-size: 18px; /* 【修改】字体改小 */
+    font-size: 18px; 
     color: white;
     letter-spacing: 2px;
     font-weight: bold;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-    display: inline-block; /* 必须是 inline-block 才能正常打字 */
+    display: inline-block; 
 }
 
-/* 6. 悬停效果 (仅在边框出来后有效) */
 .button-border-show:hover {
     background-color: rgba(255, 255, 255, 0.3);
     transform: scale(1.05);
 }
-/* ... (上面是之前的代码) ... */
 
 /* =========================================
-   雨水特效专用样式
+   雨水特效
    ========================================= */
 #rain-canvas {
     position: fixed;
@@ -138,14 +150,6 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    
-    /* 层级设置：
-       背景图在 body (最底层)
-       雨水 z-index: 1 (在背景之上)
-       走路贴纸 z-index: 10 (在雨水之上，或者您可以改成 0 让雨淋在人身上)
-       文字内容 z-index: 20 (最上层)
-    */
     z-index: 1; 
-    
-    pointer-events: none; /* 关键：让鼠标穿透雨水，不影响点击按钮 */
+    pointer-events: none; 
 }
