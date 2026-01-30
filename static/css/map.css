@@ -87,7 +87,7 @@ body {
     width: 100%;
     height: auto;
     position: relative;
-    margin-top: -30px; /* 这里的负数让地图往上提 */
+    margin-top: -10px; /* 这里的负数让地图往上提 */
     
     /* 渐变遮罩动画 */
     -webkit-mask-image: linear-gradient(to right, black 50%, transparent 60%);
@@ -187,7 +187,10 @@ body {
 /* 8. 手机适配 */
 @media screen and (max-width: 768px) {
     body { overflow: auto; } 
-    .map-marker { width: 32px; height: 32px; }
+    .map-marker { 
+        width: 20px;  /* 原为 32px，手机端进一步缩小 */
+        height: 20px; /* 原为 32px，手机端进一步缩小 */
+    }
     .map-title { font-size: 32px; margin-bottom: 20px; }
     .main-nav { overflow-x: auto; white-space: nowrap; }
     .main-nav ul { padding: 0 10px; display: inline-block; min-width: 100%; }
