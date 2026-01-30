@@ -54,61 +54,42 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
+            // ... (前面的雨水特效和走路贴纸代码保持不变，此处省略以节省篇幅) ...
+            // 请保留你原本的 const canvas ... 到 const steps = ... 的所有代码
+            
             // ==========================================
             // 🌧️ 雨水特效脚本 (保持不变)
             // ==========================================
             const canvas = document.getElementById('rain-canvas');
             const ctx = canvas.getContext('2d');
-            
             let width = window.innerWidth;
             let height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-
-            // 雨滴数组
             const drops = [];
             const maxDrops = window.innerWidth < 768 ? 80 : 150; 
-
-            // 初始化雨滴
             for (let i = 0; i < maxDrops; i++) {
-                drops.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    length: Math.random() * 20 + 10,
-                    speed: Math.random() * 5 + 5
-                });
+                drops.push({x: Math.random() * width, y: Math.random() * height, length: Math.random() * 20 + 10, speed: Math.random() * 5 + 5});
             }
-
-            // 绘制函数
             function drawRain() {
                 ctx.clearRect(0, 0, width, height);
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; 
                 ctx.lineWidth = 1;
                 ctx.lineCap = 'round';
-
                 for (let i = 0; i < drops.length; i++) {
                     const d = drops[i];
                     ctx.beginPath();
                     ctx.moveTo(d.x, d.y);
                     ctx.lineTo(d.x - 1, d.y + d.length); 
                     ctx.stroke();
-
                     d.y += d.speed;
                     d.x -= 0.5;
-
-                    if (d.y > height) {
-                        d.y = -d.length;
-                        d.x = Math.random() * width;
-                    }
-                    if (d.x < 0) {
-                        d.x = width;
-                    }
+                    if (d.y > height) { d.y = -d.length; d.x = Math.random() * width; }
+                    if (d.x < 0) { d.x = width; }
                 }
                 requestAnimationFrame(drawRain);
             }
-            
             drawRain();
-
             window.addEventListener('resize', () => {
                 width = window.innerWidth;
                 height = window.innerHeight;
@@ -116,14 +97,12 @@
                 canvas.height = height;
             });
 
-
             // ==========================================
             // 🚶 走路贴纸逻辑 (保持不变)
             // ==========================================
             const sticker = document.getElementById('walking-sticker');
             const button = document.getElementById('enter-btn');
             let animationHasPlayed = false;
-
             document.body.addEventListener('click', function(event) {
                 if (button.contains(event.target)) return; 
                 if (!animationHasPlayed && sticker) { 
@@ -166,6 +145,10 @@
             async function typeText(step) {
                 const el = step.el;
                 const text = step.text;
+                
+                // 【双重保险】每次打字前，强制清空当前内容，防止万一有残留
+                el.innerText = ''; 
+                
                 el.classList.remove('type-hidden');
                 el.style.opacity = 1;
                 el.classList.add('typing-cursor');
@@ -189,28 +172,29 @@
             }
 
             // ==========================================
-            // 【核心修改】精准等待字体加载逻辑
-            // 不再使用 setTimeout 盲猜时间，而是检测字体真正加载完毕
+            // 【核心修复】互斥锁逻辑
+            // 确保 runSequence 无论如何只会被调用一次
             // ==========================================
             
-            // 1. 这是一个保险措施：如果浏览器太老不支持检测，就用旧方法延迟
-            let fontLoaded = false;
+            let hasStarted = false; // 这就是那把“锁”
+
+            function startAnimationSafely() {
+                if (hasStarted) return; // 如果已经开始了，直接退出，不要重复运行
+                hasStarted = true;      // 标记为已开始
+                
+                console.log("动画启动");
+                runSequence();
+            }
             
-            // 2. 只有当浏览器确认所有字体（MyWebFont）加载完毕后，才运行动画
+            // 1. 字体加载完毕的触发器
             document.fonts.ready.then(function() {
-                fontLoaded = true;
-                // 即使字体加载好了，也稍微等 0.5 秒让页面稳定一下
-                setTimeout(runSequence, 500);
-                console.log("字体加载完毕，开始动画");
+                // 即使字体加载好了，也稍微缓冲 0.5 秒
+                setTimeout(startAnimationSafely, 500);
             });
 
-            // 3. 兜底方案：万一 fonts.ready 卡住（比如字体文件 404），
-            // 3秒后强制开始，哪怕是宋体也得显示出来，不能一直白屏
+            // 2. 超时兜底触发器 (3秒)
             setTimeout(function() {
-                if (!fontLoaded) {
-                    console.log("字体加载超时，强制开始");
-                    runSequence();
-                }
+                startAnimationSafely();
             }, 3000);
             
         });
