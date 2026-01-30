@@ -132,7 +132,7 @@
             });
 
             // ==========================================
-            // ⌨️ 打字机逻辑 (保持不变)
+            // ⌨️ 打字机逻辑
             // ==========================================
             const titleEl = document.getElementById('main-title');
             const dividerEl = document.getElementById('main-divider');
@@ -191,7 +191,14 @@
                 step.el.classList.add('button-border-show');
             }
 
-            runSequence();
+            // ==========================================
+            // 【核心修改】推迟打字机运行时间
+            // 2500 代表延迟 2.5 秒，确保字体加载完毕再开始打字
+            // ==========================================
+            setTimeout(function() {
+                runSequence();
+            }, 2500);
+            
         });
     </script>
 
