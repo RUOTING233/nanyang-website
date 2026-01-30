@@ -2,7 +2,7 @@
 @font-face {
     font-family: 'MyWebFont';
     src: url('/static/fonts/MyCustomFont.woff2') format('woff2'); font-display: block; 
-    font-display: swap; 
+    font-display: block; 
 }
 
 body {

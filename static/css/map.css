@@ -6,7 +6,7 @@
     font-family: 'MyWebFont';
     /* ⚠️如果你文件名不一样，请修改这里 */
     src: url('/static/fonts/MyCustomFont.woff2') format('woff2'); font-display: block; 
-    font-display: swap; /* 优化加载体验 */
+    font-display: block; /* 优化加载体验 */
 }
 
 body { 

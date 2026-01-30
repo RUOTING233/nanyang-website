@@ -5,7 +5,7 @@
     font-family: 'MyWebFont';
     /* 确保这里是你的 woff 文件 */
     src: url('/static/fonts/MyCustomFont.woff2') format('woff2'); font-display: block; 
-    font-display: swap;
+    font-display: block;
 }
 
 /* 全局默认用宋体 (适合正文阅读) */

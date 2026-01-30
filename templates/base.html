@@ -7,13 +7,16 @@
     <link rel="stylesheet" href="/static/css/exhibition.css">
 
     <style>
-        /* =========================================
-           1. 字体定义
-           ========================================= */
-        @font-face {
-            font-family: 'MyWebFont';
-            src: url('fonts/MyCustomFont.ttf');
-        }
+        /* base.html */
+
+/* =========================================
+   1. 字体定义
+   ========================================= */
+@font-face {
+    font-family: 'MyWebFont';
+    src: url('fonts/MyCustomFont.ttf');
+    font-display: block;  /* <--- 在这里加上这一行，注意后面有个分号 */
+}
 
         body {
             margin: 0;
