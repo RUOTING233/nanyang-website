@@ -54,25 +54,21 @@
     </nav>
     
     <div class="content-card">
-        <h2 class="type-line">关于本站</h2>
+        <h2 class="type-line" data-text="关于本站"></h2>
         
-        <p class="type-line">
-           本站作为“留声南洋：战时新马流徙华文女性作家文献汇编与研究（1931-1945）”项目的核心研究成果而推出，旨在将十四年抗战时期南下新马的华文女性作家的史料与创作进行数字化整合，构建一个兼具文献保存、研究与展示于一体的专题数字展厅。
-        </p>
+        <p class="type-line" data-text="本站作为“留声南洋：战时新马流徙华文女性作家文献汇编与研究（1931-1945）”项目的核心研究成果而推出，旨在将十四年抗战时期南下新马的华文女性作家的史料与创作进行数字化整合，构建一个兼具文献保存、研究与展示于一体的专题数字展厅。"></p>
 
         <p>
-            <span class="type-line">本站以“南渡纪”（作家档案）、“南行图”（流徙地图）与“南洋文献”（作品与史料）为核心架构，内容主体聚焦于</span>
-            <span class="type-line highlight-name">莹姿、冯伊湄、王映霞、王莹、沈兹九</span>
-            <span class="type-line">这五位在战时流徙新马的华文女性作家。我们通过跨域式的文献搜集，并对长期散佚于海内外报刊的原始文献进行整理，最终汇编为首部专题文献总集，同时为读者提供可检索的专题文献库。</span>
+            <span class="type-line" data-text="本站以“南渡纪”（作家档案）、“南行图”（流徙地图）与“南洋文献”（作品与史料）为核心架构，内容主体聚焦于"></span>
+            
+            <span class="type-line highlight-name" data-text="莹姿、冯伊湄、王映霞、王莹、沈兹九"></span>
+            
+            <span class="type-line" data-text="这五位在战时流徙新马的华文女性作家。我们通过跨域式的文献搜集，并对长期散佚于海内外报刊的原始文献进行整理，最终汇编为首部专题文献总集，同时为读者提供可检索的专题文献库。"></span>
         </p>
 
-        <p class="type-line">
-            运用数字人文方法（Digital Humanities）进行研究与呈现是本站的一次跨领域尝试。我们创新性地采用“人机协同”的开发路径，结合Python、Plotly、Folium等技术栈，开发出“交互式创作年表”与“交互式流徙地图”等可视化成果。我们期望通过这种动态的、可交互的视觉呈现方式，将文学、历史、地理等多重信息进行跨学科整合，直观地呈现作家群体的南洋活动轨迹与创作脉络。
-        </p>
+        <p class="type-line" data-text="运用数字人文方法（Digital Humanities）进行研究与呈现是本站的一次跨领域尝试。我们创新性地采用“人机协同”的开发路径，结合Python、Plotly、Folium等技术栈，开发出“交互式创作年表”与“交互式流徙地图”等可视化成果。我们期望通过这种动态的、可交互的视觉呈现方式，将文学、历史、地理等多重信息进行跨学科整合，直观地呈现作家群体的南洋活动轨迹与创作脉络。"></p>
         
-        <p class="type-line">
-           我们诚挚邀请海内外学者一同使用本站的文献资源与可视化工具，共同探索这群女性作家在南洋留下的珍贵声音。
-        </p>
+        <p class="type-line" data-text="我们诚挚邀请海内外学者一同使用本站的文献资源与可视化工具，共同探索这群女性作家在南洋留下的珍贵声音。"></p>
 
         <div class="navigation-links type-line fade-only">
             <a href="/archive" class="button-primary">Next</a>
@@ -96,11 +92,13 @@
             const lineData = [];
             lines.forEach(line => {
                 if (line.classList.contains('fade-only')) {
+                    // 淡入元素（Next按钮），不需要读取文字，保留原样
                     lineData.push({ element: line, text: '', isFade: true });
                 } else {
-                    const originalText = line.textContent.trim().replace(/\s+/g, ' '); 
+                    // 【核心修改】从 data-text 读取文字，而不是 textContent
+                    // 并且不需要再执行 line.innerText = ''，因为 HTML 已经是空的了
+                    const originalText = line.dataset.text || ''; 
                     lineData.push({ element: line, text: originalText, isFade: false });
-                    line.innerText = ''; 
                 }
                 line.classList.add('type-hidden'); 
             });
@@ -158,8 +156,9 @@
                 }
             }
 
-            // 稍微延迟开始
-            setTimeout(typeLines, 300);
+            // 【核心修改】推迟打字机运行时间
+            // 2500 代表延迟 2.5 秒，确保字体加载完毕再开始打字
+            setTimeout(typeLines, 2500);
         });
     </script>
 

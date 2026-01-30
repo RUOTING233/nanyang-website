@@ -37,12 +37,14 @@
     <img loading="lazy" src="/static/images/walking-sticker.gif" id="walking-sticker" alt="Walking Figure">
     
     <div class="content-wrapper">
-        <h1 id="main-title" class="type-hidden">「 留声南洋 」</h1>
+        <h1 id="main-title" class="type-hidden" data-text="「 留声南洋 」"></h1>
+        
         <div id="main-divider" class="divider divider-hidden" style="max-width: 120px;"></div>
-        <p id="sub-title" class="type-hidden">战时新马流徙华文女性作家专题数字展厅</p>
+        
+        <p id="sub-title" class="type-hidden" data-text="战时新马流徙华文女性作家专题数字展厅"></p>
         
         <a href="exhibition.html" class="button" id="enter-btn">
-            <span id="btn-text" class="button-text type-hidden">进入展厅</span>
+            <span id="btn-text" class="button-text type-hidden" data-text="进入展厅"></span>
         </a>
     </div>
 
@@ -50,7 +52,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             
             // ==========================================
-            // 🌧️ 雨水特效脚本
+            // 🌧️ 雨水特效脚本 (保持不变)
             // ==========================================
             const canvas = document.getElementById('rain-canvas');
             const ctx = canvas.getContext('2d');
@@ -77,11 +79,7 @@
             // 绘制函数
             function drawRain() {
                 ctx.clearRect(0, 0, width, height);
-                
-                // 【关键修改】调节雨水颜色和透明度
-                // rgba(255, 255, 255, 0.7) -> 0.7 表示 70% 不透明，比之前的 0.4 更明显
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; 
-                
                 ctx.lineWidth = 1;
                 ctx.lineCap = 'round';
 
@@ -140,17 +138,17 @@
             const btnTextEl = document.getElementById('btn-text');
             const btnEl = document.getElementById('enter-btn');
 
+            // 【修改点 4】不再读取 innerText，而是读取 data-text 属性
+            // 这样页面一开始就是空的，绝对不会有宋体字跳出来
             const steps = [
-                { el: titleEl, text: titleEl.innerText.trim(), type: 'text' },
+                { el: titleEl, text: titleEl.dataset.text, type: 'text' },
                 { el: dividerEl, type: 'line', width: '120px' }, 
-                { el: subTitleEl, text: subTitleEl.innerText.trim(), type: 'text' },
-                { el: btnTextEl, text: btnTextEl.innerText.trim(), type: 'text' },
+                { el: subTitleEl, text: subTitleEl.dataset.text, type: 'text' },
+                { el: btnTextEl, text: btnTextEl.dataset.text, type: 'text' },
                 { el: btnEl, type: 'border' }
             ];
 
-            steps.forEach(step => {
-                if (step.type === 'text') step.el.innerText = ''; 
-            });
+            // 之前的 forEach 清空代码删除了，因为 HTML 已经是空的了
 
             async function runSequence() {
                 await wait(500);
@@ -192,8 +190,7 @@
             }
 
             // ==========================================
-            // 【核心修改】推迟打字机运行时间
-            // 2500 代表延迟 2.5 秒，确保字体加载完毕再开始打字
+            // 推迟打字机运行时间 (2.5秒)
             // ==========================================
             setTimeout(function() {
                 runSequence();
