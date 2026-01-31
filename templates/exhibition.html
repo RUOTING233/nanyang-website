@@ -10,27 +10,6 @@
     <link rel="stylesheet" href="/static/css/exhibition.css">
     
     <style>
-        /* --- 强制修复：关闭旧背景并启用新背景控制 --- */
-body { 
-    background-image: none !important; 
-}
-
-.responsive-bg-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-    pointer-events: none;
-}
-
-.responsive-bg-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-/* --- 修复结束 --- */
         /* 复刻导航栏样式 (保持不变) */
         .main-nav { 
             background-color: rgba(255, 255, 255, 0.9); 
@@ -205,12 +184,4 @@ body {
             }, 3000);
         });
     </script>
-
-<body>
-
-    <picture class="responsive-bg-container">
-        <source media="(max-width: 767px)" srcset="/static/images/background-2-mobile.webp">
-        <img src="/static/images/background-2.webp" alt="背景图">
-    </picture>
-    <nav class="main-nav">
 </html>

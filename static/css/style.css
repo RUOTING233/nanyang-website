@@ -6,9 +6,13 @@
     font-display: block;
 }
 
-/* --- 2. 基础背景设置 (已修改为支持响应式) --- */
+/* --- 2. 基础背景设置 --- */
 body {
-    /* 原有的背景图已移至 HTML 中使用 picture 标签，以实现响应式切换 */
+    /* 建议维持你现有的背景路径，如果之后找不到图再改回 /static/... */
+    background-image: url('../images/background-main.webp'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     height: 100vh;
     margin: 0;
     font-family: 'MyWebFont', sans-serif;
@@ -16,24 +20,6 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    background-color: #222; /* 兜底颜色 */
-}
-
-/* 必须添加：确保 HTML 里的背景图能铺满并固定 */
-.responsive-bg-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1; /* 保证在最底层 */
-    pointer-events: none;
-}
-
-.responsive-bg-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 核心：适配手机和电脑，防止拉伸 */
 }
 
 /* --- 3. 走路贴纸 --- */
@@ -166,4 +152,60 @@ p {
     height: 100%;
     z-index: 1; 
     pointer-events: none; 
+}
+/* =========================================
+   新增：响应式与手机适配专用代码
+   ========================================= */
+
+/* 1. 补回原 HTML 中的布局微调 */
+.content-wrapper h1 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.divider {
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 0 auto 25px auto;
+    border-radius: 2px;
+    /* 限制分割线最大宽度 */
+    max-width: 120px; 
+}
+
+/* 2. 走路贴纸修正 (改为 fixed 以防滚动移位) */
+#walking-sticker {
+    position: fixed !important; /* 覆盖原有的 absolute */
+    height: 100vh;
+    height: 100dvh;
+    width: auto;
+    left: 0;
+}
+
+/* 3. 手机端核心适配 (屏幕宽度小于 768px 时触发) */
+@media screen and (max-width: 768px) {
+    
+    /* [关键] 切换手机竖屏背景图 */
+    body {
+        background-image: url('../images/background-main-mobile.webp') !important;
+        background-position: center top; /* 从顶部居中开始显示 */
+    }
+
+    /* 手机端布局调整 */
+    .content-wrapper {
+        padding: 0 20px; /* 防止文字贴边 */
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* 允许副标题换行，防止手机上文字溢出 */
+    .content-wrapper p {
+        white-space: normal; 
+        padding: 0 10px;
+    }
+
+    /* 走路贴纸在手机上的微调 */
+    #walking-sticker {
+        left: -5%; /* 根据你的原设定微调 */
+    }
 }

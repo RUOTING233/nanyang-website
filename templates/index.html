@@ -9,29 +9,6 @@
 
     <link rel="stylesheet" href="/static/css/style.css">
     
-    <style>
-        /* 布局微调 (保持不变) */
-        .content-wrapper h1 { margin-bottom: 15px; margin-top: 0; line-height: 1.2; }
-        .divider { height: 2px; background-color: rgba(255, 255, 255, 0.8); margin: 0 auto 25px auto; border-radius: 2px; }
-        .content-wrapper p { white-space: nowrap; margin: 0; }
-
-        /* 走路贴纸 */
-        #walking-sticker {
-            position: fixed; height: 100vh; height: 100dvh; width: auto; 
-            bottom: 0; left: 0; z-index: 10; pointer-events: none; 
-            transition: transform 10s linear;
-        }
-        .is-walking { transform: translateX(100vw); }
-
-        /* 手机适配 */
-        @media screen and (max-width: 768px) {
-            .content-wrapper { padding: 0 20px; width: 100%; box-sizing: border-box; }
-            .content-wrapper h1 { font-size: 2.8rem; margin-bottom: 15px; }
-            .divider { margin-bottom: 20px; }
-            .content-wrapper p { white-space: normal; line-height: 1.6; font-size: 1.1rem; text-align: center; }
-            #walking-sticker { height: 100vh; height: 100dvh; left: -5%; }
-        }
-    </style>
 </head>
 <body>
 
@@ -201,12 +178,4 @@
     </script>
 
 </body>
-<body>
-
-    <picture class="responsive-bg-container">
-        <source media="(max-width: 767px)" srcset="/static/images/background-main-mobile.webp">
-        <img src="/static/images/background-main.webp" alt="背景图">
-    </picture>
-
-    <canvas id="rain-canvas"></canvas>
 </html>

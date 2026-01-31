@@ -167,3 +167,16 @@ body {
 .typing-cursor::after {
     color: #CD5C5C;
 }
+/* =========================================
+   新增：响应式与手机适配专用代码
+   ========================================= */
+
+@media screen and (max-width: 768px) {
+    
+    /* 1. [关键] 切换手机竖屏背景图 */
+    body {
+        background-image: url('../images/background-2-mobile.webp') !important;
+        background-position: center top; 
+        background-attachment: scroll; /* 手机上用 scroll 兼容性更好，防止背景图拉伸变形 */
+     }
+ }

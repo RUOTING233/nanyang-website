@@ -1,163 +1,260 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>南渡纪 - 留声南洋</title>
+
     <link rel="stylesheet" href="/static/css/archive.css">
-<style>
-    /* 强制关闭 archive.css 里的旧背景 */
-    body { 
-        background-image: none !important; 
-        background-color: #222;
-    }
 
-    /* 定义响应式背景容器样式 */
-    .responsive-bg-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: -1;
-        pointer-events: none;
-    }
-
-    .responsive-bg-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-</style>
 </head>
+
 <body>
+
 
     <img loading="lazy" src="/static/images/dove.webp" id="flying-dove" alt="dove">
 
+
     <nav class="main-nav">
+
         <ul>
+
             <li><a href="/">首页</a></li>
+
             <li><a href="exhibition.html">项目介绍</a></li>
+
             <li><a href="/archive" class="active">南渡纪</a></li>
+
             <li><a href="/map">南行图</a></li>
+
             <li><a href="/base">南洋文献</a></li>
+
             <li><a href="/end">联系我们</a></li>
+
         </ul>
+
     </nav>
 
+
     <main class="page-content">
+
         <h1 class="page-title">南渡纪</h1>
+
         <div class="timeline-container">
+
             <div class="timeline-bar"></div>
-            
+
+           
+
             <div class="timeline-event" id="event-1934">
+
                 <a href="#" class="timeline-name name-top" id="yingzi-trigger">莹姿</a>
+
                 <div class="timeline-dot large"></div>
+
                 <div class="timeline-year">1934</div>
+
             </div>
-            
+
+           
+
             <div class="timeline-event" id="event-1938">
+
                 <a href="#" class="timeline-name name-top" id="fengyimei-trigger">冯伊湄</a>
+
                 <div class="timeline-dot large"></div>
+
                 <div class="timeline-year">1938</div>
+
                 <a href="#" class="timeline-name name-bottom" id="wangyingxia-trigger">王映霞</a>
+
             </div>
-            
+
+           
+
             <div class="timeline-event" id="event-1939">
+
                 <a href="#" class="timeline-name name-top" id="wangying-trigger">王莹</a>
+
                 <div class="timeline-dot large"></div>
+
                 <div class="timeline-year">1939</div>
+
             </div>
-            
+
+           
+
             <div class="timeline-event" id="event-1941">
+
                 <a href="#" class="timeline-name name-top" id="shenzjiu-trigger">沈兹九</a>
+
                 <div class="timeline-dot large"></div>
+
                 <div class="timeline-year">1941</div>
+
             </div>
-            
+
+           
+
             <div class="timeline-event" id="event-1931"><div class="timeline-dot"></div><div class="timeline-year year-black">1931</div></div>
+
             <div class="timeline-event" id="event-1932"><div class="timeline-dot"></div></div>
+
             <div class="timeline-event" id="event-1933"><div class="timeline-dot"></div></div>
+
             <div class="timeline-event" id="event-1935"><div class="timeline-dot"></div></div>
+
             <div class="timeline-event" id="event-1936"><div class="timeline-dot"></div></div>
+
             <div class="timeline-event" id="event-1937"><div class="timeline-dot"></div></div>
+
             <div class="timeline-event" id="event-1940"><div class="timeline-dot"></div></div>
+
             <div class="timeline-event" id="event-1942"><div class="timeline-dot"></div></div>
+
             <div class="timeline-event" id="event-1943"><div class="timeline-dot"></div></div>
+
             <div class="timeline-event" id="event-1944"><div class="timeline-dot"></div></div>
+
             <div class="timeline-event" id="event-1945"><div class="timeline-dot"></div><div class="timeline-year year-black">1945</div></div>
+
         </div>
+
     </main>
 
+
     <aside id="yingzi-panel" class="side-panel">
+
         <button class="close-panel-btn">&times;</button>
-        <div class="panel-content"></div> 
+
+        <div class="panel-content"></div>
+
     </aside>
-    
+
+   
+
     <aside id="fengyimei-panel" class="side-panel">
+
         <button class="close-panel-btn">&times;</button>
+
         <div class="panel-content"></div>
+
     </aside>
-    
+
+   
+
     <aside id="wangyingxia-panel" class="side-panel">
+
         <button class="close-panel-btn">&times;</button>
+
         <div class="panel-content"></div>
+
     </aside>
-    
+
+   
+
     <aside id="wangying-panel" class="side-panel">
+
         <button class="close-panel-btn">&times;</button>
+
         <div class="panel-content"></div>
+
     </aside>
-    
+
+   
+
     <aside id="shenzjiu-panel" class="side-panel">
+
         <button class="close-panel-btn">&times;</button>
+
         <div class="panel-content"></div>
+
     </aside>
+
 
     <footer class="page-hint">
+
         <p>提示：点击时间轴上的名字可查看简介</p>
+
     </footer>
 
+
     <script>
+
         document.addEventListener('DOMContentLoaded', function() {
+
             // 定义触发器ID和对应的面板ID
+
             const panelData = [
+
                 { triggerId: 'yingzi-trigger', panelId: 'yingzi-panel' },
+
                 { triggerId: 'fengyimei-trigger', panelId: 'fengyimei-panel' },
+
                 { triggerId: 'wangyingxia-trigger', panelId: 'wangyingxia-panel' },
+
                 { triggerId: 'wangying-trigger', panelId: 'wangying-panel' },
+
                 { triggerId: 'shenzjiu-trigger', panelId: 'shenzjiu-panel' }
+
             ];
 
+
             panelData.forEach(item => {
+
                 const trigger = document.getElementById(item.triggerId);
+
                 const panel = document.getElementById(item.panelId);
-                
+
+               
+
                 if (trigger && panel) {
+
                     const closeBtn = panel.querySelector('.close-panel-btn');
 
+
                     // 点击名字，打开面板
+
                     trigger.addEventListener('click', function(event) {
+
                         event.preventDefault();
+
                         // 先关闭所有已打开的面板
+
                         document.querySelectorAll('.side-panel').forEach(p => p.classList.remove('is-visible'));
+
                         // 打开当前面板
+
                         panel.classList.add('is-visible');
+
                     });
 
+
                     // 点击关闭按钮
+
                     if (closeBtn) {
+
                         closeBtn.addEventListener('click', function() {
+
                             panel.classList.remove('is-visible');
+
                         });
+
                     }
+
                 }
+
             });
+
         });
+
     </script>
+
 </body>
-<picture class="responsive-bg-container">
-    <source media="(max-width: 767px)" srcset="/static/images/2-mobile.webp">
-    <img src="/static/images/2.webp" alt="背景图">
-</picture>
+
 </html>
