@@ -157,55 +157,12 @@ p {
    新增：响应式与手机适配专用代码
    ========================================= */
 
-/* 1. 补回原 HTML 中的布局微调 */
-.content-wrapper h1 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    line-height: 1.2;
-}
-
-.divider {
-    height: 2px;
-    background-color: rgba(255, 255, 255, 0.8);
-    margin: 0 auto 25px auto;
-    border-radius: 2px;
-    /* 限制分割线最大宽度 */
-    max-width: 120px; 
-}
-
-/* 2. 走路贴纸修正 (改为 fixed 以防滚动移位) */
-#walking-sticker {
-    position: fixed !important; /* 覆盖原有的 absolute */
-    height: 100vh;
-    height: 100dvh;
-    width: auto;
-    left: 0;
-}
-
-/* 3. 手机端核心适配 (屏幕宽度小于 768px 时触发) */
 @media screen and (max-width: 768px) {
     
-    /* [关键] 切换手机竖屏背景图 */
+    /* 1. [关键] 切换手机竖屏背景图 */
     body {
         background-image: url('../images/background-main-mobile.webp') !important;
-        background-position: center top; /* 从顶部居中开始显示 */
-    }
-
-    /* 手机端布局调整 */
-    .content-wrapper {
-        padding: 0 20px; /* 防止文字贴边 */
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* 允许副标题换行，防止手机上文字溢出 */
-    .content-wrapper p {
-        white-space: normal; 
-        padding: 0 10px;
-    }
-
-    /* 走路贴纸在手机上的微调 */
-    #walking-sticker {
-        left: -5%; /* 根据你的原设定微调 */
-    }
-}
+        background-position: center top; 
+        background-attachment: scroll; /* 手机上用 scroll 兼容性更好，防止背景图拉伸变形 */
+     }
+ }

@@ -219,9 +219,22 @@ body {
 .page-hint p { margin: 0; }
 
 /* =========================================
-   6. 手机端适配
+   1. 电脑端专属背景设置 (默认)
+   ========================================= */
+/* 注意：请务必去 HTML 的 body 标签加上 class="page-style-2" */
+.page-style-2 {
+    background-image: url('../images/2.webp'); /* 电脑端图片 */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* 电脑端固定背景 */
+}
+
+/* =========================================
+   2. 手机端适配 (合并版)
    ========================================= */
 @media screen and (max-width: 768px) {
+    
+    /* --- A. 原有的布局调整 --- */
     .main-nav { overflow-x: auto; white-space: nowrap; }
     .main-nav ul { padding: 0 10px; display: inline-block; min-width: 100%; box-sizing: border-box; }
     
@@ -234,14 +247,24 @@ body {
     .timeline-container { 
         min-width: 800px; 
         width: 90%; 
-        
-        /* 恢复默认 padding */
-        padding: 0;
-        
-        /* 智能居中 */
-        margin-left: 20px; 
+        padding: 0;      /* 恢复默认 padding */
+        margin-left: 20px; /* 智能居中 */
         margin-right: auto;
     }
     
     .side-panel { width: 85%; right: -85%; }
+
+    /* --- B. 新增：背景图切换 (针对 .page-style-2) --- */
+    .page-style-2 {
+        /* 切换为手机竖屏背景 2-mobile.webp */
+        background-image: url('../images/2-mobile.webp') !important;
+        
+        /* 核心三件套：居中、锁定不滚动、铺满 */
+        background-position: center top; 
+        background-attachment: fixed !important; 
+        background-size: cover !important;
+        
+        /* 确保高度撑满 */
+        min-height: 100vh;
+    }
 }

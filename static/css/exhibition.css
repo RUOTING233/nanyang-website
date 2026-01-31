@@ -7,15 +7,20 @@
     font-display: block; /* 优化加载体验 */
 }
 
+/* 1. 通用设置（保留字体和边距，不动它） */
 body {
-    background-image: url('../images/background-2.webp'); 
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
     margin: 0;
     padding: 0;
     /* 确保所有文字都应用您的字体 */
     font-family: 'MyWebFont', sans-serif;
+}
+
+/* 2. 专属背景设置（把背景独立出来） */
+.page-exhibition {
+    background-image: url('../images/background-2.webp'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .main-nav {
@@ -171,12 +176,28 @@ body {
    新增：响应式与手机适配专用代码
    ========================================= */
 
+/* =========================================
+   新增：响应式与手机适配专用代码
+   ========================================= */
+
 @media screen and (max-width: 768px) {
     
-    /* 1. [关键] 切换手机竖屏背景图 */
-    body {
+    /* 1. [关键] 切换手机竖屏背景图并锁定 */
+     .page-exhibition{
         background-image: url('../images/background-2-mobile.webp') !important;
         background-position: center top; 
-        background-attachment: scroll; /* 手机上用 scroll 兼容性更好，防止背景图拉伸变形 */
+        
+        /* 【修改重点】
+           把 scroll 改为 fixed。
+           这样背景图就会像贴纸一样贴在屏幕背后，
+           无论前面的文字怎么变长、页面怎么滚动，背景图都纹丝不动。
+        */
+        background-attachment: fixed !important; 
+        
+        /* 确保背景图铺满屏幕，不留白 */
+        background-size: cover !important;
+        
+        /* 确保高度占满视口 */
+        min-height: 100vh;
      }
  }

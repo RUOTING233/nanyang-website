@@ -252,3 +252,32 @@ body {
     pointer-events: none; /* 让鼠标可以透过文字点击下面的东西，避免遮挡 */
 }
 .page-hint p { margin: 0; }
+/* =========================================
+   新增：第四页背景图设置 (复用 Style 2)
+   ========================================= */
+
+/* 1. 电脑端默认背景 */
+.page-style-2 {
+    background-image: url('../images/2.webp');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; 
+}
+
+/* 2. 手机端背景切换 */
+@media screen and (max-width: 768px) {
+    
+    /* 使用 body.page-style-2 提高权重，确保生效 */
+    body.page-style-2 {
+        /* 切换为手机竖屏背景 */
+        background-image: url('../images/2-mobile.webp') !important;
+        
+        /* 核心三件套：居中、锁定、铺满 */
+        background-position: center top !important; 
+        background-attachment: fixed !important; 
+        background-size: cover !important;
+        
+        /* 确保高度至少占满一屏 */
+        min-height: 100vh;
+    }
+}
