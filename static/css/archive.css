@@ -268,3 +268,31 @@ body {
         min-height: 100vh;
     }
 }
+/* 基础背景设置（电脑端或其他默认背景） */
+.archive-container {
+    background-image: url('your-desktop-bg.webp');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+/* 针对手机端的响应式修改 */
+@media screen and (max-width: 768px) {
+    body {
+        /* 将背景绑定在 body 上，确保它相对于视口固定，而不是随时间轴滚动 */
+        background-image: url('2-mobile.webp') !important;
+        background-attachment: fixed; /* 核心：背景固定，不随滚动条移动 */
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .archive-container {
+        /* 清除容器自身的背景，避免遮挡 body 背景 */
+        background: transparent !important;
+        
+        /* 确保你的时间轴容器允许横向溢出 */
+        overflow-x: auto; 
+        display: block;
+        width: 100%;
+    }
+}
