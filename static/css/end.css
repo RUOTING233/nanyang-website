@@ -184,3 +184,33 @@ body {
     flex-direction: column;
     align-items: center; /* 居中对齐 */
 }
+/* =========================================
+   新增：最后一页背景适配 (Page 3)
+   ========================================= */
+
+/* 1. 电脑端设置 (你的图片 3.webp) */
+.page-style-3 {
+    /* 电脑端背景 */
+    background-image: url('../images/3.webp'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* 电脑端固定背景 */
+}
+
+/* 2. 手机端适配设置 */
+@media screen and (max-width: 768px) {
+    
+    /* 使用 body.page-style-3 提高权重 */
+    body.page-style-3 {
+        /* ⚠️ 假设手机端图片叫 3-mobile.webp，如果不是请在这里修改 */
+        background-image: url('../images/3-mobile.webp') !important;
+        
+        /* 核心三件套 */
+        background-position: center top !important; 
+        background-attachment: fixed !important; 
+        background-size: cover !important;
+        
+        /* 高度撑满 */
+        min-height: 100vh;
+    }
+}
