@@ -63,57 +63,32 @@ h1 {
     margin-bottom: 0;
 }
 
-/* --- 6. 分隔线样式 (动画虚线版) --- */
+/* --- 6. 分隔线 (隐形桥梁版) --- */
+/* 必须保留这个元素，作为连接大标题和副标题的时间桥梁 */
 #main-divider {
-    /* === 1. 外观设置：虚线 + 变细 === */
-    height: 0; 
-    background-color: transparent;
-    
-    /* 改为 dashed (长虚线)，宽度设为 2px (不加粗，刚刚好) */
-    border-top: 2px dashed white; 
-    
-    /* === 2. 尺寸与位置：减短 + 居中 === */
-    /* 5em 大约和标题一样宽 */
-    width: 5em; 
-    
-    /* 保持字号基准 */
-    font-size: clamp(2rem, 10vw, 4.5rem);
-    
-    /* 居中定位 */
-    margin-left: auto;
-    margin-right: auto;
-    
-    /* 上下间距 */
-    margin-top: 1rem;
-    margin-bottom: 3rem;
-    
-    /* === 3. 动画核心 (关键！) === */
-    /* 这是“最终状态”：完全不透明 */
-    opacity: 1;
-    
-    /* 这里的 transition 决定了动画怎么动 */
-    /* width 1.5s: 宽度花1.5秒慢慢变长 */
-    /* opacity 1.5s: 透明度花1.5秒慢慢变亮 */
-    transition: width 1.5s ease-out, opacity 1.5s ease-out;
-}
-
-/* === 4. 初始隐藏状态 (配合你的 JS) === */
-/* 必须加上 !important 以确保一开始是隐藏的 */
-.divider-hidden {
-    /* 宽度为 0，这样移除时会从中间向两边“画”出来 */
-    width: 0 !important; 
-    
-    /* 透明度为 0，完全隐形 */
+    /* 1. 彻底隐身 */
     opacity: 0 !important;
+    border: none !important;
+    background: transparent !important;
+
+    /* 2. 消除空间 */
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+
+    /* 3. 让 JS 能读取到它 */
+    display: block; 
     
-    /* 隐藏边框颜色，防止缩成一点时有白点 */
-    border-color: transparent !important;
+    /* 【核心修复】必须加这个！ */
+    /* 给它 0.1秒 的变化时间，仅仅是为了骗过 JS，让它发送“结束信号” */
+    transition: all 0.1s; 
 }
 
-/* 如果你的 HTML 里有 divider-hidden 类，确保它不会完全消失 */
+/* 初始状态类 */
 .divider-hidden {
-    opacity: 0;
-    width: 0;
+    /* 配合上面的 transition，只要有属性变化即可 */
+    width: 0 !important;
+    opacity: 0 !important;
 }
 
 /* --- 7. 副标题样式 --- */
