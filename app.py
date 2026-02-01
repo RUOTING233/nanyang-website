@@ -1,10 +1,12 @@
 import os
 import re
 from flask import Flask, render_template, request, abort
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import distinct
 
 app = Flask(__name__)
+CORS(app)  #
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///works.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
