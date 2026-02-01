@@ -13,7 +13,7 @@ def init():
     print("🚀 正在重新初始化数据库...")
     
     with app.app_context():
-        db.drop_all()
+        Work.__table__.drop(db.engine, checkfirst=True)
         db.create_all()
 
         if not os.path.exists(excel_filename):
