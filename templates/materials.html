@@ -48,11 +48,95 @@
 
         <div class="content-wrapper">
 
+            <div class="content-wrapper">
+
             <div class="result-header">
                 <span class="result-title">—— 检索结果 (共 {{ materials|length }} 条) ——</span>
             </div>
 
+           {% if sb_values and materials %}
+            
+            <script src="{{ url_for('static', filename='timeline2/plotly.min.js') }}"></script>
+            
+            <style>
+                .chart-responsive-container {
+                    /* 宽度占满父容器，但不超过 1200px */
+                    width: 100%;
+                    max-width: 1200px;
+                    
+                    /* 高度固定为 600px (或者你可以改成 70vh 让它占屏幕高度的 70%) */
+                    height: 600px;
+                    
+                    margin: 0 auto 30px auto;
+                    border: 2px solid #eee;
+                    border-radius: 8px;
+                    background-color: #fff;
+                    position: relative; 
+                }
+            </style>
+
+            <div class="chart-responsive-container">
+                <div id="material-sunburst" style="width:100%; height:100%;"></div>
+            </div>
+
+            <script>
+                // 获取后端数据
+                var ids = {{ sb_ids | tojson | safe }};
+                var labels = {{ sb_labels | tojson | safe }};
+                var parents = {{ sb_parents | tojson | safe }};
+                var values = {{ sb_values | tojson | safe }};
+
+                var data = [{
+                    type: "sunburst",
+                    ids: ids,
+                    labels: labels,
+                    parents: parents,
+                    values: values,
+                    branchvalues: "total",
+                    insidetextorientation: 'radial', 
+
+                    texttemplate: "<b>%{label}</b><br>%{value}份",
+                    hovertemplate: '<b>%{label}</b>: %{value}份<extra></extra>',
+
+                    marker: {
+                        line: {width: 2, color: '#fff'},
+                        colors: values, 
+                        colorscale: [
+                            [0.0, '#FFE4E1'], 
+                            [1.0, '#CD5C5C']  
+                        ]
+                    }
+                }];
+
+                var layout = {
+                    // 边距设小一点，让图表尽量变大
+                    margin: {l: 10, r: 10, b: 10, t: 10},
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    font: {
+                        family: '"Songti SC", "SimSun", serif',
+                        size: 14
+                    },
+                    // 【关键修改】删除了固定的 width 和 height
+                    // Plotly 会自动填充父容器
+                };
+                
+                // 【关键配置】开启响应式布局 (responsive: true)
+                var config = {
+                    responsive: true, 
+                    displayModeBar: false
+                };
+
+                Plotly.newPlot('material-sunburst', data, layout, config);
+                
+                // 额外保险：监听窗口大小改变，强制重绘
+                window.onresize = function() {
+                    Plotly.Plots.resize('material-sunburst');
+                };
+            </script>
+            {% endif %}
+            
             <div class="material-grid">
+                
                 {% if materials %}
                     {% for m in materials %}
                     <a href="{{ url_for('material_detail', id=m.id) }}" class="folder-card">

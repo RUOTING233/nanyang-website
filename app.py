@@ -26,6 +26,8 @@ class Work(db.Model):
     genre = db.Column(db.String(50))
     source = db.Column(db.String(500))
     content = db.Column(db.Text)
+    # 【新增】这里加一行，用来存图片路径
+    image_path = db.Column(db.String(300))
 
 # ... (前面的代码不变)
 
@@ -87,11 +89,66 @@ def get_files_in_folder(base_path, sub_path=''):
     # 5. 直接返回，不要再加来加去了
     return dirs, all_files
 
+# ============================================
+# 3. 模板过滤器 (Template Filters)
+# ============================================
+
 @app.template_filter('highlight')
 def highlight_filter(text, keyword):
-    if not keyword or not text: return text
+    """
+    功能：给文本中的关键词加上红色高亮标签
+    """
+    if not keyword or not text:
+        return text
+    # re.IGNORECASE 让搜索不区分大小写
     pattern = re.compile(f'({re.escape(keyword)})', re.IGNORECASE)
     return pattern.sub(r'<span class="highlight">\1</span>', text)
+
+@app.template_filter('extract_sentence')
+def extract_sentence_filter(content, keyword):
+    """
+    功能：在正文中找到关键词所在的句子，并截取出来。
+    """
+    if not keyword or not content:
+        return None
+    
+    # 1. 为了查找方便，统一转小写找位置 (但截取时用原文本)
+    idx = content.lower().find(keyword.lower())
+    
+    if idx == -1:
+        return None # 正文里没这个词，返回 None
+    
+    # 2. 向前找句号（确定句子开头）
+    # 往回找最近的 。 ！ ？ 换行符 或者 字符串开头
+    start = idx
+    while start > 0:
+        char = content[start]
+        if char in ['。', '！', '？', '\n', '!', '?']:
+            start += 1 # 找到标点后，往后挪一位才是文字开始
+            break
+        start -= 1
+        
+    # 3. 向后找句号（确定句子结尾）
+    end = idx
+    total_len = len(content)
+    while end < total_len:
+        char = content[end]
+        if char in ['。', '！', '？', '\n', '!', '?']:
+            end += 1 # 把标点符号也带上
+            break
+        end += 1
+    
+    # 4. 截取这句话
+    sentence = content[start:end].strip()
+    
+    # 5. 防御性截断：万一这句话特别长（比如几百字没标点），强行截取关键词前后
+    if len(sentence) > 150:
+        snippet_start = max(0, idx - 50)
+        snippet_end = min(total_len, idx + 50)
+        sentence = "..." + content[snippet_start:snippet_end] + "..."
+
+    return sentence
+
 
 # ============================================
 # 3. 路由
@@ -117,54 +174,157 @@ def creation():
             try: query = query.filter_by(year=int(year_filter))
             except: pass
 
+    # ... 前面的代码不变 ...
+
+    # 初始化词频统计列表
+    chart_data = []
+
+    # ... (前面的代码不变)
+
+    # 初始化两个空列表，准备传给图表
+    chart_x = [] # 存标题
+    chart_y = [] # 存数量
+
     if keyword:
-        rule = (Work.title.contains(keyword) | Work.content.contains(keyword) | Work.genre.contains(keyword))
+        # 1. 数据库筛选
+        rule = (Work.title.contains(keyword) | Work.content.contains(keyword))
         query = query.filter(rule)
-    
-    works = query.order_by(Work.id).all()
+        
+        works = query.order_by(Work.id).all()
+
+        # 2. 【新增】统计词频逻辑
+        stats = []
+        for work in works:
+            # 统计标题和正文里关键词出现的总次数
+            c_title = work.title.count(keyword) if work.title else 0
+            c_content = work.content.count(keyword) if work.content else 0
+            total = c_title + c_content
+            
+            if total > 0:
+                stats.append({'title': work.title, 'count': total})
+        
+        # 3. 【新增】排序：按数量从大到小
+        stats.sort(key=lambda x: x['count'], reverse=True)
+        
+        # 4. 只取前 20 名 (防止柱子太多太挤)
+        stats = stats[:20]
+        
+        # 5. 拆分数据给 Plotly 用
+        chart_x = [item['title'] for item in stats]
+        chart_y = [item['count'] for item in stats]
+
+    else:
+        works = query.order_by(Work.id).all()
+
     years_db = db.session.query(distinct(Work.year)).order_by(Work.year).all()
     available_years = [y[0] for y in years_db if y[0] and y[0] != 0]
 
+    # 【修改】return 这里一定要把 chart_x 和 chart_y 传出去
     return render_template('creation.html', works=works, keyword=keyword, 
                            current_author=author_filter, current_genre=genre_filter,
-                           current_year=year_filter, available_years=available_years)
+                           current_year=year_filter, available_years=available_years,
+                           chart_x=chart_x, chart_y=chart_y) # <--- 重点看这里
 
 @app.route('/article/<int:work_id>')
 def article(work_id):
     work = Work.query.get_or_404(work_id)
-    return render_template('article.html', work=work)
+    
+    # 【新增】获取 URL 里的关键词 (比如 ?q=黄河)
+    keyword = request.args.get('q', '') 
+    
+    # 【修改】把 keyword 传给 article.html
+    return render_template('article.html', work=work, keyword=keyword)
 
 # --- 【修改】南洋史料路由 ---
 @app.route('/materials')
-def materials_list():
-    # 获取筛选参数：涉及人物 & 出版刊物
-    current_author = request.args.get('author', 'all')
-    current_publication = request.args.get('publication', 'all') # 变量名改了
-    
-    query = Material.query
+def materials():
+    # 1. 【修复关键】显式定义筛选变量
+    author_filter = request.args.get('author', 'all')
+    pub_filter = request.args.get('publication', 'all')
 
-    # 1. 筛选作家
-    if current_author != 'all':
-        query = query.filter_by(author=current_author)
+    # 2. 建立基础查询 (请确保 Material 是你存放史料的模型名)
+    query = Material.query 
+
+    # 3. 应用筛选逻辑
+    if author_filter != 'all':
+        query = query.filter(Material.author == author_filter)
     
-    # 2. 筛选出版刊物 (不再是 source)
-    if current_publication != 'all':
-        query = query.filter_by(publication=current_publication)
+    if pub_filter != 'all':
+        query = query.filter(Material.publication == pub_filter)
+
+    # 4. 获取筛选后的所有数据
+    materials = query.all()
+
+    # 5. 获取数据库中所有刊物列表 (用于下拉菜单)
+    # distinct 需要从 sqlalchemy 导入: from sqlalchemy import distinct
+    pubs_db = db.session.query(distinct(Material.publication)).all()
+    available_publications = [p[0] for p in pubs_db if p[0]]
+
+    # ==========================================
+    # 旭日图数据处理逻辑 (Sunburst)
+    # ==========================================
     
-    # 3. 排序
-    materials = query.order_by(Material.sort_index, Material.id).all()
+    author_map = {
+        'yingzi': '莹姿', 'fengyimei': '冯伊湄',
+        'wangyingxia': '王映霞', 'wangying': '王莹', 'shenzijiu': '沈兹九'
+    }
+
+    stats = {}
     
-    # 4. 获取所有“出版刊物”选项 (去重)
-    pub_query = db.session.query(distinct(Material.publication)).order_by(Material.publication).all()
-    # 过滤空值
-    available_publications = [p[0] for p in pub_query if p[0] and p[0] != '暂无']
+    for m in materials:
+        # 获取中文人名
+        author_name = author_map.get(m.author, m.author) if m.author else "未知作者"
+        # 获取刊物名
+        pub_name = m.publication if m.publication else "其他刊物"
+        
+        if author_name not in stats:
+            stats[author_name] = {}
+        
+        if pub_name not in stats[author_name]:
+            stats[author_name][pub_name] = 0
+            
+        stats[author_name][pub_name] += 1
+
+    # 构建 Plotly 数据
+    sb_ids = []
+    sb_labels = []
+    sb_parents = []
+    sb_values = []
+
+    # (1) 圆心
+    root_id = "总览"
+    sb_ids.append(root_id)
+    sb_labels.append("史料总览")
+    sb_parents.append("")
+    sb_values.append(len(materials))
+
+    # (2) 填充数据
+    for author, pubs in stats.items():
+        # 作家层
+        author_total = sum(pubs.values())
+        sb_ids.append(author) 
+        sb_labels.append(author)
+        sb_parents.append(root_id)
+        sb_values.append(author_total)
+
+        # 刊物层
+        for pub, count in pubs.items():
+            child_id = f"{author}-{pub}"
+            sb_ids.append(child_id)
+            sb_labels.append(pub)
+            sb_parents.append(author)
+            sb_values.append(count)
     
+    # ==========================================
+
+    # 6. 返回模板 (变量名现在已经对齐了)
     return render_template('materials.html', 
                            materials=materials, 
-                           current_author=current_author,
-                           current_publication=current_publication, # 传给前端
-                           available_publications=available_publications)
-
+                           current_author=author_filter,        # 对应上面定义的变量
+                           current_publication=pub_filter,      # 对应上面定义的变量
+                           available_publications=available_publications,
+                           sb_ids=sb_ids, sb_labels=sb_labels, 
+                           sb_parents=sb_parents, sb_values=sb_values)
 @app.route('/material/<int:id>')
 @app.route('/material/<int:id>/<path:subpath>')
 def material_detail(id, subpath=''):

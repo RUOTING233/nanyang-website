@@ -37,10 +37,25 @@
         </header>
 
         <div class="article-content">
+            {% if work.image_path %}
+                <div style="text-align: center; margin-bottom: 30px;">
+                   <img src="{{ url_for('static', filename=work.image_path) }}" 
+                        alt="作品配图" 
+                        style="max-width: 100%; max-height: 500px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
+    </div>
+{% endif %}
             
-            <div class="text-content">
-                {{ work.content | default('【暂无录入内容，请在数据库中添加】', true) | safe }}
-            </div>
+       <div class="text-content">
+    {% if work.content %}
+        {% for line in work.content.split('\n') %}
+            
+            <p>{{ line | highlight(keyword) | safe }}</p>
+            
+        {% endfor %}
+    {% else %}
+        <p>【暂无录入内容，请在数据库中添加】</p>
+    {% endif %}
+</div>
             
             <br><br>
             

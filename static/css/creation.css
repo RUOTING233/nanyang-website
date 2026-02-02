@@ -799,3 +799,28 @@ body {
 }
 
 .reset-btn:hover { background-color: #444; }
+/* 搜索结果里的摘录文字 */
+.search-snippet {
+    font-size: 14px;       /* 字小一点 */
+    color: #666;           /* 颜色灰一点 */
+    margin-top: 5px;       /* 离标题有一点距离 */
+    padding-left: 20px;    /* 稍微缩进一点 */
+    border-left: 3px solid #eee; /* 左边加个装饰线 */
+    line-height: 1.5;
+}
+
+.snippet-label {
+    color: #d9534f;        /* [摘录] 两个字用红色 */
+    font-weight: bold;
+    margin-right: 5px;
+}
+/* =========================================
+   10. 【新增】搜索关键词高亮样式
+   ========================================= */
+.highlight {
+    color: #ff0000;            /* 鲜艳的红色 */
+    font-weight: bold;         /* 加粗 */
+    background-color: yellow;  /* 背景变成黄色 (如果不想要背景色，删掉这行) */
+    padding: 0 2px;            /* 左右留一点缝隙 */
+    border-radius: 2px;
+}

@@ -17,7 +17,9 @@ body {
     background-position: center;
     background-attachment: fixed;
     min-height: 100vh;
-    overflow: hidden; /* 禁止页面滚动 */
+    /* --- 修改这里 --- */
+    overflow-y: scroll; /* 强制显示垂直滚动轴 */
+    overflow-x: hidden; /* 隐藏水平滚动轴，防止页面左右晃动 */
 }
 
 /* 2. 导航栏样式 */
@@ -280,4 +282,27 @@ body {
         /* 确保高度至少占满一屏 */
         min-height: 100vh;
     }
+}
+/* 自定义滚动条整体样式 */
+::-webkit-scrollbar {
+    width: 10px;          /* 滚动条宽度 */
+    display: block;       /* 确保显示 */
+}
+
+/* 滚动条轨道（底色） */
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05); /* 极浅的灰色底色 */
+}
+
+/* 滚动条滑块（滑动的那个部分） */
+::-webkit-scrollbar-thumb {
+    background: #bbb;      /* 中灰色 */
+    border-radius: 5px;    /* 圆角 */
+    border: 2px solid transparent; /* 利用透明边框创造一点边距感 */
+    background-clip: padding-box;
+}
+
+/* 鼠标悬停在滑块上时颜色加深 */
+::-webkit-scrollbar-thumb:hover {
+    background: #999; 
 }

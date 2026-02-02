@@ -102,18 +102,105 @@
                     <a href="/creation" class="inline-back-btn">← 返回</a>
                     <span class="result-title">—— 检索结果 (共 {{ works|length }} 条) ——</span>
                 </div>
+                {% if chart_x and chart_y %}
+                    <script src="{{ url_for('static', filename='timeline2/plotly.min.js') }}"></script>
+                    
+                    <style>
+    .chart-scroll-container {
+        width: 100%;
+        max-width: 1100px;
+        height: 600px;
+        margin: 20px auto;
+        overflow: auto; /* 关键：超出出滚动条 */
+        border: 2px solid #eee;
+        border-radius: 8px;
+        background: #fff;
+    }
+</style>
+
+<div class="chart-scroll-container">
+    <div id="plotly-bar-chart"></div>
+</div>
+                    
+                 <script type="text/javascript">
+    var xDataRaw = {{ chart_x | tojson | safe }};
+    var yData = {{ chart_y | tojson | safe }};
+
+    // 1. 统计最长标题字数
+    var maxTitleLength = 0;
+
+    var xDataVertical = xDataRaw.map(function(title) {
+        // 只去书名号，【不截断】
+        title = title.replace(/[《》]/g, '');
+        
+        if (title.length > maxTitleLength) {
+            maxTitleLength = title.length;
+        }
+        return title.split('').join('<br>'); 
+    });
+
+    // 2. 动态计算宽高，撑出滚动条
+    var minBarWidth = 60; // 每个柱子最小宽度
+    var dynamicWidth = Math.max(1000, xDataRaw.length * minBarWidth); // 宽度 = 柱子数量 * 60
+    var textHeight = maxTitleLength * 18; // 底部文字高度
+    var dynamicHeight = 450 + textHeight; // 高度 = 图表区 + 文字区
+
+    var trace = {
+        x: xDataVertical,
+        y: yData,
+        type: 'bar',
+        marker: { color: '#CD5C5C', opacity: 0.8 },
+        text: yData,
+        textposition: 'auto',
+        hoverinfo: 'y+text'
+    };
+
+    var layout = {
+        title: {
+            text: '关键词“{{ keyword }}”频次统计',
+            font: { family: 'MyWebFont, Songti SC', size: 18, color: '#333' }
+        },
+        xaxis: { tickangle: 0, tickfont: { family: 'Songti SC', size: 14 } },
+        yaxis: { title: '出现次数' },
+        
+        // 核心：设置真实宽高
+        width: dynamicWidth,
+        height: dynamicHeight,
+        
+        margin: { b: textHeight + 60 }, // 底部留白
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)'
+    };
+
+    Plotly.newPlot('plotly-bar-chart', [trace], layout, {displayModeBar: false});
+</script>
+                {% endif %}
 
                 {% if works %}
-                    {% for work in works %}
-                    <div class="work-line">
-                        <a href="{{ url_for('article', work_id=work.id) }}" class="work-title-link">
-                            {{ work.title | highlight(keyword) | safe }}
-                        </a>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="no-result">未找到相关文章，请尝试其他关键词。</div>
-                {% endif %}
+    {% for work in works %}
+    <div class="work-line">
+        <a href="{{ url_for('article', work_id=work.id, q=keyword) }}" class="work-title-link">
+    {% if keyword and keyword in work.title %}
+        {{ work.title | highlight(keyword) | safe }}
+    {% else %}
+        {{ work.title }}
+    {% endif %}
+</a>
+
+        {% set snippet = work.content | extract_sentence(keyword) %}
+        
+        {% if snippet %}
+            <div class="search-snippet">
+                <span class="snippet-label">[摘录]</span> 
+                ...{{ snippet | highlight(keyword) | safe }}...
+            </div>
+        {% endif %}
+
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="no-result">未找到相关文章，请尝试其他关键词。</div>
+{% endif %}
 
             {% else %}
                 

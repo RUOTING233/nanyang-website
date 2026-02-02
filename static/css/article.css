@@ -105,16 +105,28 @@ body {
 /* =========================================
    5. 正文内容 (保持宋体)
    ========================================= */
+/* =========================================
+   5. 正文内容 (修改版)
+   ========================================= */
 .text-content {
     font-family: "SimSun", "Songti SC", serif; /* 宋体 */
     font-size: 1.2em;
-    text-align: justify;
+    text-align: justify; /* 两端对齐 */
     color: #222;
+    line-height: 1.8;
 }
 
+/* 针对每一个自然段的设置 */
 .text-content p {
-    margin-bottom: 1.5em;
+    /* 【核心】首行缩进 2 个字符 (2em) */
     text-indent: 2em;
+    
+    /* 段落之间的间距 (回车的效果) */
+    margin-top: 0;
+    margin-bottom: 20px; 
+    
+    /* 强行撑开高度，防止空行被浏览器吃掉 */
+    min-height: 1.5em; 
 }
 
 /* =========================================
@@ -136,4 +148,12 @@ body {
 @media screen and (max-width: 768px) {
     .article-container { margin: 20px; padding: 30px; }
     .fixed-back-btn { top: 15px; left: 15px; font-size: 14px; }
+}
+/* 高亮关键词样式 */
+.highlight {
+    color: #d9534f;        /* 红色 */
+    font-weight: bold;     /* 加粗 */
+    background-color: #fff3cd; /* (可选) 淡黄色背景，让它更显眼 */
+    padding: 0 2px;
+    border-radius: 2px;
 }
