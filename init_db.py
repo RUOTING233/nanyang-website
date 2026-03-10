@@ -41,7 +41,14 @@ def get_folder_content(author_en, title):
             found_images.extend(glob.glob(os.path.join(work_dir, pattern)))
         
         if found_images:
-            image_rel_path = os.path.relpath(found_images[0], app.root_path).replace('\\', '/')
+            # 把所有找到的图片路径，转换成相对路径
+            all_rel_paths = []
+            for img in found_images:
+                rel_path = os.path.relpath(img, app.root_path).replace('\\', '/')
+                all_rel_paths.append(rel_path)
+            
+            # 用逗号把所有路径拼成一长串，存进数据库 (例如: "图1.jpg,图2.jpg")
+            image_rel_path = ",".join(all_rel_paths)
             
     return content_text, image_rel_path
 
