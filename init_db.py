@@ -20,7 +20,9 @@ def get_folder_content(author_en, title):
 
     if os.path.exists(work_dir):
         # 1. 找 txt
+        # 1. 找 txt (兼容大写 .TXT)
         txt_files = glob.glob(os.path.join(work_dir, '*.txt'))
+        txt_files.extend(glob.glob(os.path.join(work_dir, '*.TXT')))
         if txt_files:
             try:
                 with open(txt_files[0], 'r', encoding='utf-8') as f:
@@ -35,7 +37,11 @@ def get_folder_content(author_en, title):
                 print(f"  ❌ 读取txt失败 ({title}): {e}")
 
         # 2. 找图片 (代码不变)
-        img_patterns = ['*.jpg', '*.png', '*.jpeg', '*.webp']
+        # 2. 找图片 (增加大写后缀，防止 Linux 服务器找不到)
+        img_patterns = [
+            '*.jpg', '*.png', '*.jpeg', '*.webp',
+            '*.JPG', '*.PNG', '*.JPEG', '*.WEBP'
+        ]
         found_images = []
         for pattern in img_patterns:
             found_images.extend(glob.glob(os.path.join(work_dir, pattern)))

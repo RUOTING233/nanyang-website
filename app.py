@@ -1,5 +1,6 @@
 import os
 import re
+import zhconv
 from flask import Flask, render_template, request, abort
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -95,6 +96,16 @@ def get_files_in_folder(base_path, sub_path=''):
 
 @app.template_filter('highlight')
 def highlight_filter(text, keyword):
+    if not keyword or not text:
+        return text
+    # 将关键词同时转为简体和繁体
+    k_simp = zhconv.convert(keyword, 'zh-cn')
+    k_trad = zhconv.convert(keyword, 'zh-tw')
+    
+    # 用正则同时匹配简体或繁体
+    pattern = re.compile(f'({re.escape(k_simp)}|{re.escape(k_trad)})', re.IGNORECASE)
+    return pattern.sub(r'<span class="highlight">\1</span>', text)
+def highlight_filter(text, keyword):
     """
     功能：给文本中的关键词加上红色高亮标签
     """
@@ -113,7 +124,14 @@ def extract_sentence_filter(content, keyword):
         return None
     
     # 1. 为了查找方便，统一转小写找位置 (但截取时用原文本)
-    idx = content.lower().find(keyword.lower())
+   # 分别找简体和繁体的位置，哪个找到了就用哪个
+    k_simp = zhconv.convert(keyword, 'zh-cn').lower()
+    k_trad = zhconv.convert(keyword, 'zh-tw').lower()
+    content_lower = content.lower()
+    
+    idx = content_lower.find(k_simp)
+    if idx == -1:
+        idx = content_lower.find(k_trad)
     
     if idx == -1:
         return None # 正文里没这个词，返回 None
@@ -187,7 +205,29 @@ def creation():
 
     if keyword:
         # 1. 数据库筛选
-        rule = (Work.title.contains(keyword) | Work.content.contains(keyword))
+        if keyword:
+        # 将关键词转为简繁双份
+            k_simp = zhconv.convert(keyword, 'zh-cn')
+            k_trad = zhconv.convert(keyword, 'zh-tw')
+
+        # 1. 数据库筛选 (同时找简体和繁体)
+        rule = (
+            Work.title.contains(k_simp) | Work.content.contains(k_simp) |
+            Work.title.contains(k_trad) | Work.content.contains(k_trad)
+        )
+        query = query.filter(rule)
+        
+        works = query.order_by(Work.id).all()
+
+        # 2. 统计词频逻辑 (同时统计简体和繁体出现的次数)
+        stats = []
+        for work in works:
+            c_title = (work.title.count(k_simp) + work.title.count(k_trad)) if work.title else 0
+            c_content = (work.content.count(k_simp) + work.content.count(k_trad)) if work.content else 0
+            total = c_title + c_content
+            
+            if total > 0:
+                stats.append({'title': work.title, 'count': total})
         query = query.filter(rule)
         
         works = query.order_by(Work.id).all()
