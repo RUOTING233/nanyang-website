@@ -47,6 +47,9 @@ def get_folder_content(author_en, title):
             found_images.extend(glob.glob(os.path.join(work_dir, pattern)))
         
         if found_images:
+            # 【新增这一行：去重并排序，防止 Windows 重复抓取】
+            found_images = sorted(list(set(found_images)))
+            
             # 把所有找到的图片路径，转换成相对路径
             all_rel_paths = []
             for img in found_images:
