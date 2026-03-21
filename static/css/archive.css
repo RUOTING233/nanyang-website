@@ -288,10 +288,13 @@ body {
         margin-right: auto;
     }
     
-    .side-panel { width: 85%; right: -85%; }
+    .side-panel { width: 95%; right: -95%; }
+    .side-panel .panel-content { 
+        background-position: center top; 
+    }
     /* 手机端悬浮文字适配 */
     .text-overlay {
-        padding: 120px 30px 20px 30px; /* 手机端整体靠上一点 */
+        padding: 120px 50px 20px 50px; /* 手机端整体靠上一点 */
     }
     .text-overlay h2 { 
         margin: 0 0 20px 40%; /* 手机屏幕窄，往右挤 40% 即可 */
