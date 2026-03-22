@@ -487,23 +487,23 @@
       // 👇===== 手机触控优化（防溢出 + 超大隐形触控区版） =====👇
     if (window.innerWidth <= 768) {
         // 1. 稍微放大红点和箭头视觉大小
-        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[1].symbolSize = 18; 
-        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[0].symbolSize = 15; 
-        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[0].lineStyle.width = 3;
+        option_449d44a05b6741e883ed942ed1be40b1.series[1].symbolSize = 18; 
+        option_449d44a05b6741e883ed942ed1be40b1.series[0].symbolSize = 15; 
+        option_449d44a05b6741e883ed942ed1be40b1.series[0].lineStyle.width = 3;
         
         // 2. 【恢复触发方式】保持和电脑端一样的触碰/点击双触发
-        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.triggerOn = 'mousemove|click';
+        option_449d44a05b6741e883ed942ed1be40b1.tooltip.triggerOn = 'mousemove|click';
         
         // 3. 开启防溢出，允许内部滑动
-        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.confine = true;
-        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.enterable = true;
+        option_449d44a05b6741e883ed942ed1be40b1.tooltip.confine = true;
+        option_449d44a05b6741e883ed942ed1be40b1.tooltip.enterable = true;
         
         // 4. 【超大隐形触控区】边框加到 40 像素！划过就能触发
-        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[1].itemStyle.borderColor = 'rgba(0,0,0,0)';
-        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[1].itemStyle.borderWidth = 40;
+        option_449d44a05b6741e883ed942ed1be40b1.series[1].itemStyle.borderColor = 'rgba(0,0,0,0)';
+        option_449d44a05b6741e883ed942ed1be40b1.series[1].itemStyle.borderWidth = 40;
 
         // 5. 【彻底解决超出屏幕】用 75vw 代替固定像素，绝对不超边框！
-        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.formatter = function (params) {
+        option_449d44a05b6741e883ed942ed1be40b1.tooltip.formatter = function (params) {
             if (params.seriesType !== 'scatter') { return params.name; }
             var desc = params.value[2];
             if (!desc) return params.name;
@@ -515,9 +515,9 @@
     }
     // 👆===== 优化结束 =====👆
 
-    chart_55b09ac6dfdf474fa23b9b6d3c0e067b.setOption(option_55b09ac6dfdf474fa23b9b6d3c0e067b);
+    chart_449d44a05b6741e883ed942ed1be40b1.setOption(option_449d44a05b6741e883ed942ed1be40b1);
     window.addEventListener('resize', function(){
-        chart_55b09ac6dfdf474fa23b9b6d3c0e067b.resize();
+        chart_449d44a05b6741e883ed942ed1be40b1.resize();
     });
     </script>
 </body>
