@@ -484,29 +484,41 @@
         "emphasis": {}
     }
 };
-       // 👇===== 新增：手机端触控终极优化 (沈兹九版) =====👇
+      // 👇===== 手机触控优化（防溢出 + 超大隐形触控区版） =====👇
     if (window.innerWidth <= 768) {
-        // 1. 放大红点和箭头视觉大小
-        option_449d44a05b6741e883ed942ed1be40b1.series[1].symbolSize = 25; 
-        option_449d44a05b6741e883ed942ed1be40b1.series[0].symbolSize = 20; 
-        option_449d44a05b6741e883ed942ed1be40b1.series[0].lineStyle.width = 4;
+        // 1. 稍微放大红点和箭头视觉大小
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[1].symbolSize = 18; 
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[0].symbolSize = 15; 
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[0].lineStyle.width = 3;
         
-        // 2. 强制手机端手指“点击”立刻触发
-        option_449d44a05b6741e883ed942ed1be40b1.tooltip.triggerOn = 'click';
+        // 2. 【恢复触发方式】保持和电脑端一样的触碰/点击双触发
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.triggerOn = 'mousemove|click';
         
-        // 3. 允许手指触摸并进入提示框内滑动
-        option_449d44a05b6741e883ed942ed1be40b1.tooltip.enterable = true;
+        // 3. 开启防溢出，允许内部滑动
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.confine = true;
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.enterable = true;
         
-        // 4. 增加隐形触控区 (透明边框)
-        option_449d44a05b6741e883ed942ed1be40b1.series[1].itemStyle.borderColor = 'rgba(0,0,0,0)';
-        option_449d44a05b6741e883ed942ed1be40b1.series[1].itemStyle.borderWidth = 15;
+        // 4. 【超大隐形触控区】边框加到 40 像素！划过就能触发
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[1].itemStyle.borderColor = 'rgba(0,0,0,0)';
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[1].itemStyle.borderWidth = 40;
+
+        // 5. 【彻底解决超出屏幕】用 75vw 代替固定像素，绝对不超边框！
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.formatter = function (params) {
+            if (params.seriesType !== 'scatter') { return params.name; }
+            var desc = params.value[2];
+            if (!desc) return params.name;
+            // 注意这里的 max-width: 75vw 和 word-wrap: break-word
+            return '<div style="max-width: 75vw; max-height: 50vh; overflow-y: auto; white-space: normal; word-wrap: break-word; line-height: 1.6; padding-right: 8px;">' + 
+                   '<b style="font-size:16px;">' + params.name + '</b><hr style="margin:6px 0; border:0; border-top:1px solid #ccc;">' + 
+                   desc + '</div>';
+        };
     }
-    // 👆===== 新增结束 =====👆
-    
-    chart_449d44a05b6741e883ed942ed1be40b1.setOption(option_449d44a05b6741e883ed942ed1be40b1);
+    // 👆===== 优化结束 =====👆
+
+    chart_55b09ac6dfdf474fa23b9b6d3c0e067b.setOption(option_55b09ac6dfdf474fa23b9b6d3c0e067b);
     window.addEventListener('resize', function(){
-        chart_449d44a05b6741e883ed942ed1be40b1.resize();
-    })
+        chart_55b09ac6dfdf474fa23b9b6d3c0e067b.resize();
+    });
     </script>
 </body>
 </html>
