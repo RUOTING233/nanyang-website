@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>莹姿南洋流徙地图</title>
+    <title>冯伊湄南洋流徙地图 (1931-1942)</title>
                 <script type="text/javascript" src="/static/map2/js_assets/echarts.min.js"></script>
             <script type="text/javascript" src="/static/map2/js_assets/maps/world.js"></script>
             <script type="text/javascript" src="/static/map2/js_assets/themes/vintage.js"></script>
@@ -10,27 +10,22 @@
     
 </head>
 <body >
-<a href="../map.html" class="float-back-btn">返回</a>
+<a href="/map" class="float-back-btn">返回</a>
 
 <style>
     /* 悬浮按钮样式 */
     .float-back-btn {
-        position: fixed;       /* 固定定位 */
-        
-        /* 【关键修改】改到左下角 */
-        bottom: 30px;          /* 距离底部 30px */
-        left: 30px;            /* 距离左边 30px */
-        
-        z-index: 9999;         /* 确保浮在地图最上面 */
-        
+        position: fixed;       
+        bottom: 30px;          
+        left: 30px;            
+        z-index: 9999;         
         background-color: rgba(255, 255, 255, 0.9); 
         color: #444;           
         text-decoration: none; 
         font-family: "Songti SC", "SimSun", serif; 
         font-size: 16px;
         font-weight: bold;
-        
-        padding: 10px 25px;    /* 稍微宽一点，好看 */
+        padding: 10px 25px;    
         border-radius: 30px;   
         border: 1px solid #ccc;
         box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
@@ -39,7 +34,7 @@
 
     /* 鼠标悬停效果 */
     .float-back-btn:hover {
-        background-color: #CD5C5C; /* 变红 */
+        background-color: #CD5C5C; 
         color: white;              
         border-color: #CD5C5C;
         transform: translateY(-2px); 
@@ -56,11 +51,11 @@
         }
     }
 </style>
-    <div id="477cd7dfd41c4db2950a99e32a2ffb2f" class="chart-container" style="width:100%; height:900px; "></div>
+    <div id="05fd5fb820a04f1aafa5e76b04c602b5" class="chart-container" style="width:100%; height:900px; "></div>
     <script>
-        var chart_477cd7dfd41c4db2950a99e32a2ffb2f = echarts.init(
-            document.getElementById('477cd7dfd41c4db2950a99e32a2ffb2f'), 'vintage', {renderer: 'canvas', locale: 'ZH'});
-        var option_477cd7dfd41c4db2950a99e32a2ffb2f = {
+        var chart_05fd5fb820a04f1aafa5e76b04c602b5 = echarts.init(
+            document.getElementById('05fd5fb820a04f1aafa5e76b04c602b5'), 'vintage', {renderer: 'canvas', locale: 'ZH'});
+        var option_05fd5fb820a04f1aafa5e76b04c602b5 = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -100,15 +95,41 @@
             "symbolSize": 12,
             "data": [
                 {
-                    "name": "\u798f\u5efa\u6c38\u6625\u53bf->\u65b0\u52a0\u5761",
+                    "name": "\u5e7f\u4e1c\u7701\u5e7f\u5dde\u5e02->\u7f05\u7538\u4ef0\u5149",
                     "coords": [
                         [
-                            118.2942,
-                            25.3219
+                            113.27,
+                            23.13
                         ],
                         [
-                            103.8198,
-                            1.3521
+                            96.16,
+                            16.8
+                        ]
+                    ]
+                },
+                {
+                    "name": "\u7f05\u7538\u4ef0\u5149->\u9a6c\u6765\u897f\u4e9a\u69df\u57ce",
+                    "coords": [
+                        [
+                            96.16,
+                            16.8
+                        ],
+                        [
+                            100.33,
+                            5.42
+                        ]
+                    ]
+                },
+                {
+                    "name": "\u9a6c\u6765\u897f\u4e9a\u69df\u57ce->\u65b0\u52a0\u5761",
+                    "coords": [
+                        [
+                            100.33,
+                            5.42
+                        ],
+                        [
+                            103.82,
+                            1.35
                         ]
                     ]
                 },
@@ -116,51 +137,12 @@
                     "name": "\u65b0\u52a0\u5761->\u5409\u9686\u5761",
                     "coords": [
                         [
-                            103.8198,
-                            1.3521
+                            103.82,
+                            1.35
                         ],
                         [
-                            101.6841,
-                            3.1319
-                        ]
-                    ]
-                },
-                {
-                    "name": "\u5409\u9686\u5761->\u68c9\u5170",
-                    "coords": [
-                        [
-                            101.6841,
-                            3.1319
-                        ],
-                        [
-                            98.6722,
-                            3.5952
-                        ]
-                    ]
-                },
-                {
-                    "name": "\u68c9\u5170->\u9a6c\u516d\u7532",
-                    "coords": [
-                        [
-                            98.6722,
-                            3.5952
-                        ],
-                        [
-                            102.2501,
-                            2.1896
-                        ]
-                    ]
-                },
-                {
-                    "name": "\u9a6c\u516d\u7532->\u5409\u9686\u5761",
-                    "coords": [
-                        [
-                            102.2501,
-                            2.1896
-                        ],
-                        [
-                            101.6841,
-                            3.1319
+                            101.68,
+                            3.13
                         ]
                     ]
                 },
@@ -168,38 +150,38 @@
                     "name": "\u5409\u9686\u5761->\u65b0\u52a0\u5761",
                     "coords": [
                         [
-                            101.6841,
-                            3.1319
+                            101.68,
+                            3.13
                         ],
                         [
-                            103.8198,
-                            1.3521
+                            103.82,
+                            1.35
                         ]
                     ]
                 },
                 {
-                    "name": "\u65b0\u52a0\u5761->\u4e2d\u56fd\u9999\u6e2f",
+                    "name": "\u65b0\u52a0\u5761->\u7f05\u7538\u4ef0\u5149",
                     "coords": [
                         [
-                            103.8198,
-                            1.3521
+                            103.82,
+                            1.35
                         ],
                         [
-                            114.13,
-                            22.35
+                            96.16,
+                            16.8
                         ]
                     ]
                 },
                 {
-                    "name": "\u4e2d\u56fd\u9999\u6e2f->\u6e56\u5357\u957f\u6c99\u5e02",
+                    "name": "\u7f05\u7538\u4ef0\u5149->\u91cd\u5e86\u5e02",
                     "coords": [
                         [
-                            114.13,
-                            22.35
+                            96.16,
+                            16.8
                         ],
                         [
-                            112.97,
-                            28.2
+                            106.51,
+                            29.55
                         ]
                     ]
                 }
@@ -258,59 +240,51 @@
             "symbolSize": 12,
             "data": [
                 {
-                    "name": "\u798f\u5efa\u6c38\u6625\u53bf",
+                    "name": "\u5e7f\u4e1c\u7701\u5e7f\u5dde\u5e02",
                     "value": [
-                        118.2942,
-                        25.3219,
-                        "1934\u5e74\u6625\uff0c\u7531\u4e8e\u6c38\u6625\u53bf\u571f\u532a\u9a9a\u4e71\uff0c\u5055\u540c\u4e08\u592b\u6797\u82b3\u58f0\u5357\u4e0b"
+                        113.27,
+                        23.13,
+                        "\u7ea61931\u5e74\u81f31932\u5e74\u5728\u5e7f\u5dde\u4e2d\u5c71\u5927\u5b66\u6559\u4e66\uff1b<br>1937\u5e74\u5728\u5e7f\u5dde\u63a5\u5230\u4ef0\u5149\u798f\u5efa\u5973\u5b50\u5e08\u8303\u5b66\u6821\u6821\u957f\u7684\u8058\u4e66"
+                    ]
+                },
+                {
+                    "name": "\u7f05\u7538\u4ef0\u5149",
+                    "value": [
+                        96.16,
+                        16.8,
+                        "\u7ea61938\u5e74\u521d\u81f31939\u5e743\u6708\u62c5\u4efb\u4ef0\u5149\u798f\u5efa\u5973\u5b50\u5e08\u8303\u5b66\u6821\u7684\u6821\u957f<br><br><hr style='margin:6px 0; border:0; border-top:1px dashed #ccc;'><br>\u65b0\u52a0\u5761\u6ca6\u9677\uff0c\u56de\u56fd\uff0c1942\u5e741\u67089\u65e5\u9014\u5f84\u7f05\u7538\u4ef0\u5149"
+                    ]
+                },
+                {
+                    "name": "\u9a6c\u6765\u897f\u4e9a\u69df\u57ce",
+                    "value": [
+                        100.33,
+                        5.42,
+                        "\u7ea61939\u5e744\u6708\u81f31939\u5e74\u5e95\u4efb\u804c\u300a\u661f\u69df\u65e5\u62a5\u300b\uff0c\u4e3b\u7f16\u6587\u827a\u526f\u520a"
                     ]
                 },
                 {
                     "name": "\u65b0\u52a0\u5761",
                     "value": [
-                        103.8198,
-                        1.3521,
-                        "1. 1934\u5e74\u6625\uff0c\u7531\u4e8e\u6c38\u6625\u53bf\u571f\u532a\u9a9a\u4e71\uff0c\u5055\u540c\u4e08\u592b\u6797\u82b3\u58f0\u5357\u4e0b<br>2. 1940\u5e747\u670812\u65e5\u62c5\u4efb\u65b0\u52a0\u5761\u798f\u5efa\u4f1a\u9986\u5d07\u798f\u5973\u6821\u6559\u52a1\u4e3b\u4efb\uff1b1940\u5e748\u670830\u65e5\u65e0\u6545\u88ab\u5d07\u798f\u5973\u6821\u4ee5\u672a\u6ce8\u518c\u4e3a\u7531\u8f9e\u9000\uff1b1941\u5e746\u670820\u65e5\u63a7\u544a\u798f\u5efa\u4f1a\u9986\u65e0\u6545\u8f9e\u9000\u80dc\u8bc9"
+                        103.82,
+                        1.35,
+                        "1939\u5e74\u5e95\u5728\u69df\u57ce\u5931\u4e1a\uff0c\u5230\u8fbe\u65b0\u52a0\u5761\uff1b<br>1940\u5e74\u4efb\u201c\u738b\u972d\u591a\u5973\u58eb\u753b\u5c55\u7b79\u8d48\u59d4\u5458\u4f1a\u201d\u62db\u5f85\u80a1\u5e72\u4e8b<br><br><hr style='margin:6px 0; border:0; border-top:1px dashed #ccc;'><br>1940\u5e7412\u6708\u51af\u4f0a\u6e44\u88ab\u8058\u4e3a\u65b0\u52a0\u5761\u5357\u534e\u5973\u4e2d\u6821\u957f\uff1b<br>1941\u5e743\u6708\u62c5\u4efb\u65b0\u52a0\u5761\u5357\u534e\u5973\u4e2d\u6821\u957f\uff1b<br>1941\u5e74\u5e95\u592a\u5e73\u6d0b\u6218\u4e89\u7206\u53d1\uff0c\u4e00\u5bb6\u642c\u79bb\u65b0\u52a0\u5761"
                     ]
                 },
                 {
                     "name": "\u5409\u9686\u5761",
                     "value": [
-                        101.6841,
-                        3.1319,
-                        "1. \u7ea61934\u5e74\u81f31935\u5e74\u671f\u95f4\u62c5\u4efb\u5409\u9686\u5761\u5764\u6210\u5b66\u6821\u6559\u5458\u3001\u5409\u9686\u5761\u4e2d\u534e\u5973\u6821\u6821\u957f<br>2. \u7ea61940\u5e74\u62c5\u4efb\u5409\u9686\u5761\u4e2d\u534e\u4e2d\u5b66(\u636e\u8003\u8bc1\u8be5\u68211939\u5e747\u6708\u6210\u7acb)\u6821\u6587\u53f2\u6821\u5458\uff0c\u671f\u95f4\u591a\u6b21\u5f80\u8fd4\u65b0\u52a0\u5761"
+                        101.68,
+                        3.13,
+                        "1940\u5e743\u6708\u4ece\u65b0\u52a0\u5761\u5230\u4e86\u5409\u9686\u5761\uff0c\u5177\u4f53\u4e8b\u4ef6\u4e0d\u8be6"
                     ]
                 },
                 {
-                    "name": "\u68c9\u5170",
+                    "name": "\u91cd\u5e86\u5e02",
                     "value": [
-                        98.6722,
-                        3.5952,
-                        "1936\u5e74\u62c5\u4efb\u68c9\u5170\u82cf\u4e1c\u4e2d\u5b66\u6587\u53f2\u6559\u5458\uff0c\u671f\u95f4\u591a\u6b21\u5f80\u8fd4\u65b0\u52a0\u5761"
-                    ]
-                },
-                {
-                    "name": "\u9a6c\u516d\u7532",
-                    "value": [
-                        102.2501,
-                        2.1896,
-                        "\u7ea61938\u5e74\u81f31939\u5e74\u62c5\u4efb\u9a6c\u516d\u7532\u57f9\u4fa8\u5973\u5b66\u6821\u6559\u5458\uff0c\u671f\u95f4\u591a\u6b21\u5f80\u8fd4\u65b0\u52a0\u5761"
-                    ]
-                },
-                {
-                    "name": "\u4e2d\u56fd\u9999\u6e2f",
-                    "value": [
-                        114.13,
-                        22.35,
-                        "1941\u5e748\u6708\uff0c\u957f\u6c99\u544a\u4fe1\u201c\u6bcd\u75c5\u5371\u201d\uff0c\u56de\u56fd\uff0c\u5728\u9999\u6e2f\u4e2d\u8f6c"
-                    ]
-                },
-                {
-                    "name": "\u6e56\u5357\u957f\u6c99\u5e02",
-                    "value": [
-                        112.97,
-                        28.2,
-                        "1941\u5e748\u6708\uff0c\u957f\u6c99\u544a\u4fe1\u201c\u6bcd\u75c5\u5371\u201d\uff0c\u56de\u56fd\uff0c\u62b5\u8fbe\u957f\u6c99"
+                        106.51,
+                        29.55,
+                        "\u65b0\u52a0\u5761\u6ca6\u9677\uff0c\u56de\u56fd\uff0c1942\u5e742\u6708\u5230\u8fbe\u91cd\u5e86"
                     ]
                 }
             ],
@@ -334,7 +308,7 @@
                 "confine": false,
                 "appendToBody": false,
                 "transitionDuration": 0.4,
-                "formatter":             function (params) {                if (params.seriesType !== 'scatter') {                    return params.name;                }                var desc = params.value[2];                if (!desc) return params.name;                                return '<div style=\"max-width:320px; white-space:normal; line-height:1.6;\">' +                        '<b>' + params.name + '</b><hr style=\"margin:6px 0; border:0; border-top:1px solid #ccc;\">' +                        desc +                        '</div>';            }            ,
+                "formatter":             function (params) {                if (params.seriesType !== 'scatter') { return params.name; }                var desc = params.value[2];                if (!desc) return params.name;                return '<div style=\"max-width:320px; white-space:normal; line-height:1.6;\">' +                        '<b style=\"font-size:16px;\">' + params.name + '</b><hr style=\"margin:6px 0; border:0; border-top:1px solid #ccc;\">' +                        desc +                        '</div>';            }            ,
                 "textStyle": {
                     "color": "#333",
                     "fontSize": 14
@@ -412,7 +386,7 @@
     "title": [
         {
             "show": true,
-            "text": "\u83b9\u59ff\u5357\u6d0b\u6d41\u5f99\u5730\u56fe (1934-1941)",
+            "text": "\u51af\u4f0a\u6e44\u5357\u6d0b\u6d41\u5f99\u5730\u56fe (1931-1942)",
             "target": "blank",
             "subtarget": "blank",
             "left": "20px",
@@ -447,23 +421,9 @@
         "emphasis": {}
     }
 };
-        // ... 前面的配置代码 ...
-    
-    // 👇===== 新增：手机端自适应放大红点 =====👇
-    if (window.innerWidth <= 768) {
-        // 放大散点（重要事件的红点）
-        option_477cd7dfd41c4db2950a99e32a2ffb2f.series[1].symbolSize = 25; 
-        
-        // 放大带箭头的轨迹线点（可选，如果你觉得箭头也难点的话）
-        option_477cd7dfd41c4db2950a99e32a2ffb2f.series[0].symbolSize = 20; 
-        
-        // 把线条加粗一点，在手机上更清晰（可选）
-        option_477cd7dfd41c4db2950a99e32a2ffb2f.series[0].lineStyle.width = 4;
-    }
-    // 👆===== 新增结束 =====👆
-        chart_477cd7dfd41c4db2950a99e32a2ffb2f.setOption(option_477cd7dfd41c4db2950a99e32a2ffb2f);
+        chart_05fd5fb820a04f1aafa5e76b04c602b5.setOption(option_05fd5fb820a04f1aafa5e76b04c602b5);
             window.addEventListener('resize', function(){
-                chart_477cd7dfd41c4db2950a99e32a2ffb2f.resize();
+                chart_05fd5fb820a04f1aafa5e76b04c602b5.resize();
             })
     </script>
 </body>
