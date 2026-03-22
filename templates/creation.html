@@ -152,7 +152,7 @@
         marker: { color: '#CD5C5C', opacity: 0.8 },
         text: yData,
         textposition: 'auto',
-        hoverinfo: 'y+text'
+        hoverinfo: 'y'       // <--- 修改成这样，只保留 y
     };
 
     var layout = {
@@ -177,27 +177,38 @@
                 {% endif %}
 
                 {% if works %}
-    {% for work in works %}
-    <div class="work-line">
-        <a href="{{ url_for('article', work_id=work.id, q=keyword) }}" class="work-title-link">
-    {% if keyword and keyword in work.title %}
-        {{ work.title | highlight(keyword) | safe }}
-    {% else %}
-        {{ work.title }}
-    {% endif %}
-</a>
+    {% set author_map = {
+                'yingzi': '莹姿', 
+                'fengyimei': '冯伊湄', 
+                'wangyingxia': '王映霞', 
+                'wangying': '王莹', 
+                'shenzijiu': '沈兹九'
+            } %}
 
-        {% set snippet = work.content | extract_sentence(keyword) %}
-        
-        {% if snippet %}
-            <div class="search-snippet">
-                <span class="snippet-label">[摘录]</span> 
-                ...{{ snippet | highlight(keyword) | safe }}...
+            {% for work in works %}
+            <div class="work-line">
+                <a href="{{ url_for('article', work_id=work.id, q=keyword) }}" class="work-title-link">
+                    {% set cn_author = author_map.get(work.author, work.author) %}
+                    
+                    【{{ cn_author }}】-
+                    
+                    {% if keyword and keyword in work.title %}
+                        {{ work.title | highlight(keyword) | safe }}
+                    {% else %}
+                        {{ work.title }}
+                    {% endif %}
+                </a>
+
+                {% set snippet = work.content | extract_sentence(keyword) %}
+                
+                {% if snippet %}
+                    <div class="search-snippet">
+                        <span class="snippet-label">[摘录]</span> 
+                        ...{{ snippet | highlight(keyword) | safe }}...
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
-
-    </div>
-    {% endfor %}
+            {% endfor %}
 {% else %}
     <div class="no-result">未找到相关文章，请尝试其他关键词。</div>
 {% endif %}

@@ -204,11 +204,9 @@ def creation():
     chart_y = [] # 存数量
 
     if keyword:
-        # 1. 数据库筛选
-        if keyword:
         # 将关键词转为简繁双份
-            k_simp = zhconv.convert(keyword, 'zh-cn')
-            k_trad = zhconv.convert(keyword, 'zh-tw')
+        k_simp = zhconv.convert(keyword, 'zh-cn')
+        k_trad = zhconv.convert(keyword, 'zh-tw')
 
         # 1. 数据库筛选 (同时找简体和繁体)
         rule = (
@@ -216,46 +214,36 @@ def creation():
             Work.title.contains(k_trad) | Work.content.contains(k_trad)
         )
         query = query.filter(rule)
-        
         works = query.order_by(Work.id).all()
 
-        # 2. 统计词频逻辑 (同时统计简体和繁体出现的次数)
+        # 2. 统计词频逻辑
         stats = []
         for work in works:
+            # 统计标题和正文里简繁体关键词出现的总次数
             c_title = (work.title.count(k_simp) + work.title.count(k_trad)) if work.title else 0
             c_content = (work.content.count(k_simp) + work.content.count(k_trad)) if work.content else 0
             total = c_title + c_content
             
-            if total > 0:
-                stats.append({'title': work.title, 'count': total})
-        query = query.filter(rule)
-        
-        works = query.order_by(Work.id).all()
-
-        # 2. 【新增】统计词频逻辑
-        stats = []
-        for work in works:
-            # 统计标题和正文里关键词出现的总次数
-            c_title = work.title.count(keyword) if work.title else 0
-            c_content = work.content.count(keyword) if work.content else 0
-            total = c_title + c_content
+            # 【新增】：给这篇作品贴上“词频数量”标签，方便下面排序
+            work.match_count = total
             
             if total > 0:
                 stats.append({'title': work.title, 'count': total})
         
-        # 3. 【新增】排序：按数量从大到小
+        # 【新增】：让网页下方的“检索结果文章列表”按词频从大到小排队！
+        works.sort(key=lambda x: getattr(x, 'match_count', 0), reverse=True)
+
+        # 3. 排序图表数据：按数量从大到小
         stats.sort(key=lambda x: x['count'], reverse=True)
         
-        # 4. 只取前 20 名 (防止柱子太多太挤)
-        stats = stats[:20]
+        # 【注意】：这里已经删除了限制前20名的代码，图表会展示所有匹配的文章柱子！
         
-        # 5. 拆分数据给 Plotly 用
+        # 4. 拆分数据给 Plotly 用
         chart_x = [item['title'] for item in stats]
         chart_y = [item['count'] for item in stats]
 
     else:
         works = query.order_by(Work.id).all()
-
     years_db = db.session.query(distinct(Work.year)).order_by(Work.year).all()
     available_years = [y[0] for y in years_db if y[0] and y[0] != 0]
 
