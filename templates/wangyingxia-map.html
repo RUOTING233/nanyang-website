@@ -400,7 +400,29 @@
         "emphasis": {}
     }
 };
-        chart_31a3949ac6f042769b90a4a484c74f87.setOption(option_31a3949ac6f042769b90a4a484c74f87);
+       // 👇===== 新增：手机端触控终极优化 (王映霞版) =====👇
+    if (window.innerWidth <= 768) {
+        // 1. 放大红点和箭头视觉大小
+        option_31a3949ac6f042769b90a4a484c74f87.series[1].symbolSize = 25; 
+        option_31a3949ac6f042769b90a4a484c74f87.series[0].symbolSize = 20; 
+        option_31a3949ac6f042769b90a4a484c74f87.series[0].lineStyle.width = 4;
+        
+        // 2. 强制手机端手指“点击”立刻触发
+        option_31a3949ac6f042769b90a4a484c74f87.tooltip.triggerOn = 'click';
+        
+        // 3. 允许手指触摸并进入提示框内滑动
+        option_31a3949ac6f042769b90a4a484c74f87.tooltip.enterable = true;
+        
+        // 4. 增加隐形触控区 (透明边框)
+        option_31a3949ac6f042769b90a4a484c74f87.series[1].itemStyle.borderColor = 'rgba(0,0,0,0)';
+        option_31a3949ac6f042769b90a4a484c74f87.series[1].itemStyle.borderWidth = 15;
+    }
+    // 👆===== 新增结束 =====👆
+    
+    chart_31a3949ac6f042769b90a4a484c74f87.setOption(option_31a3949ac6f042769b90a4a484c74f87);
+    window.addEventListener('resize', function(){
+        chart_31a3949ac6f042769b90a4a484c74f87.resize();
+    });
             window.addEventListener('resize', function(){
                 chart_31a3949ac6f042769b90a4a484c74f87.resize();
             })

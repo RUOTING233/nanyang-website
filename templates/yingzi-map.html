@@ -450,15 +450,23 @@
         // ... 前面的配置代码 ...
     
     // 👇===== 新增：手机端自适应放大红点 =====👇
+    // 👇===== 新增：手机端触控终极优化 =====👇
     if (window.innerWidth <= 768) {
-        // 放大散点（重要事件的红点）
+        // 1. 放大红点和箭头视觉大小
         option_477cd7dfd41c4db2950a99e32a2ffb2f.series[1].symbolSize = 25; 
-        
-        // 放大带箭头的轨迹线点（可选，如果你觉得箭头也难点的话）
         option_477cd7dfd41c4db2950a99e32a2ffb2f.series[0].symbolSize = 20; 
-        
-        // 把线条加粗一点，在手机上更清晰（可选）
         option_477cd7dfd41c4db2950a99e32a2ffb2f.series[0].lineStyle.width = 4;
+        
+        // 2. 【核心修复】强制手机端手指“点击”立刻触发，抛弃悬停
+        option_477cd7dfd41c4db2950a99e32a2ffb2f.tooltip.triggerOn = 'click';
+        
+        // 3. 允许手指触摸并进入提示框内滑动（保护长文本可读性）
+        option_477cd7dfd41c4db2950a99e32a2ffb2f.tooltip.enterable = true;
+        
+        // 4. 【增加隐形触控区】给红点加上一圈 15 像素的透明边框！
+        // 这样视觉上红点没变得特别大，但手指点到它周围一大圈都会立刻弹出！
+        option_477cd7dfd41c4db2950a99e32a2ffb2f.series[1].itemStyle.borderColor = 'rgba(0,0,0,0)';
+        option_477cd7dfd41c4db2950a99e32a2ffb2f.series[1].itemStyle.borderWidth = 15;
     }
     // 👆===== 新增结束 =====👆
         chart_477cd7dfd41c4db2950a99e32a2ffb2f.setOption(option_477cd7dfd41c4db2950a99e32a2ffb2f);

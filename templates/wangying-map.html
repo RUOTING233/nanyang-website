@@ -534,6 +534,24 @@
         "emphasis": {}
     }
 };
+        // 👇===== 新增：手机端触控终极优化 (王莹版) =====👇
+    if (window.innerWidth <= 768) {
+        // 1. 放大红点和箭头视觉大小
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[1].symbolSize = 25; 
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[0].symbolSize = 20; 
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[0].lineStyle.width = 4;
+        
+        // 2. 强制手机端手指“点击”立刻触发
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.triggerOn = 'click';
+        
+        // 3. 允许手指触摸并进入提示框内滑动
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.tooltip.enterable = true;
+        
+        // 4. 增加隐形触控区 (透明边框)
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[1].itemStyle.borderColor = 'rgba(0,0,0,0)';
+        option_55b09ac6dfdf474fa23b9b6d3c0e067b.series[1].itemStyle.borderWidth = 15;
+    }
+    // 👆===== 新增结束 =====👆
         chart_55b09ac6dfdf474fa23b9b6d3c0e067b.setOption(option_55b09ac6dfdf474fa23b9b6d3c0e067b);
             window.addEventListener('resize', function(){
                 chart_55b09ac6dfdf474fa23b9b6d3c0e067b.resize();
