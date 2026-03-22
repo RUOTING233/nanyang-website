@@ -447,32 +447,45 @@
         "emphasis": {}
     }
 };
-        // ... 前面的配置代码 ...
+       // 👇===== 手机触控优化（稳定加强版） =====👇
+    var isMobile = window.innerWidth <= 768;
     
-    // 👇===== 新增：手机端自适应放大红点 =====👇
-    // 👇===== 新增：手机端触控终极优化 =====👇
-    if (window.innerWidth <= 768) {
-        // 1. 放大红点和箭头视觉大小
+    if (isMobile) {
+        // 1. 稍微放大红点和箭头视觉大小，方便手机观看
         option_477cd7dfd41c4db2950a99e32a2ffb2f.series[1].symbolSize = 25; 
         option_477cd7dfd41c4db2950a99e32a2ffb2f.series[0].symbolSize = 20; 
         option_477cd7dfd41c4db2950a99e32a2ffb2f.series[0].lineStyle.width = 4;
         
-        // 2. 【核心修复】强制手机端手指“点击”立刻触发，抛弃悬停
+        // 2. 强制手机端手指“点击”立刻触发
         option_477cd7dfd41c4db2950a99e32a2ffb2f.tooltip.triggerOn = 'click';
         
-        // 3. 允许手指触摸并进入提示框内滑动（保护长文本可读性）
+        // 3. 允许进入提示框内滑动，并开启防溢出(confine)保护，绝不超出屏幕
         option_477cd7dfd41c4db2950a99e32a2ffb2f.tooltip.enterable = true;
+        option_477cd7dfd41c4db2950a99e32a2ffb2f.tooltip.confine = true;
         
-        // 4. 【增加隐形触控区】给红点加上一圈 15 像素的透明边框！
-        // 这样视觉上红点没变得特别大，但手指点到它周围一大圈都会立刻弹出！
+        // 4. 【核心黑科技：超大隐形触控区】给红点加上一圈 25 像素的透明边框！
+        // 这样在不改变缩放的情况下，手指随便点红点附近一大片区域，都能瞬间弹出！
         option_477cd7dfd41c4db2950a99e32a2ffb2f.series[1].itemStyle.borderColor = 'rgba(0,0,0,0)';
-        option_477cd7dfd41c4db2950a99e32a2ffb2f.series[1].itemStyle.borderWidth = 15;
+        option_477cd7dfd41c4db2950a99e32a2ffb2f.series[1].itemStyle.borderWidth = 25;
+
+        // 5. 限制弹窗最大高度，防止文字太多撑破屏幕
+        option_477cd7dfd41c4db2950a99e32a2ffb2f.tooltip.formatter = function (params) {
+            if (params.seriesType !== 'scatter') { return params.name; }
+            var desc = params.value[2];
+            if (!desc) return params.name;
+            return '<div style="max-width:280px; max-height:50vh; overflow-y:auto; white-space:normal; line-height:1.6; padding-right:8px;">' + 
+                   '<b style="font-size:16px;">' + params.name + '</b><hr style="margin:6px 0; border:0; border-top:1px solid #ccc;">' + 
+                   desc + '</div>';
+        };
     }
-    // 👆===== 新增结束 =====👆
-        chart_477cd7dfd41c4db2950a99e32a2ffb2f.setOption(option_477cd7dfd41c4db2950a99e32a2ffb2f);
-            window.addEventListener('resize', function(){
-                chart_477cd7dfd41c4db2950a99e32a2ffb2f.resize();
-            })
+
+    // 渲染地图
+    chart_477cd7dfd41c4db2950a99e32a2ffb2f.setOption(option_477cd7dfd41c4db2950a99e32a2ffb2f);
+
+    window.addEventListener('resize', function(){
+        chart_477cd7dfd41c4db2950a99e32a2ffb2f.resize();
+    });
+    // 👆===== 优化结束 =====👆
     </script>
 </body>
 </html>
