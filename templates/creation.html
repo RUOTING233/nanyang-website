@@ -130,8 +130,11 @@
     var maxTitleLength = 0;
 
     var xDataVertical = xDataRaw.map(function(title) {
-        // 只去书名号，【不截断】
-        title = title.replace(/[《》]/g, '');
+        // 1. 去掉书名号 和 结尾的右括号
+        title = title.replace(/[《》)）]/g, '');
+        
+        // 2. 把左括号替换成一个“全角空格”（它在竖排中会完美撑开一个字的距离）
+        title = title.replace(/[(（]/g, '　');
         
         if (title.length > maxTitleLength) {
             maxTitleLength = title.length;
@@ -192,7 +195,7 @@
                     
                     【{{ cn_author }}】-
                     
-                    {% if keyword and keyword in work.title %}
+                    {% if keyword %}
                         {{ work.title | highlight(keyword) | safe }}
                     {% else %}
                         {{ work.title }}

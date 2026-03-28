@@ -92,7 +92,7 @@ def init():
                 continue
 
             print(f"\n📖 正在处理作者: {sheet_name} ({author_id})")
-            df = pd.read_excel(xls, sheet_name=sheet_name)
+            df = pd.read_excel(xls, sheet_name=sheet_name).fillna('')
             
             for index, row in df.iterrows():
                 # 去除标题前后的空格，保证干净

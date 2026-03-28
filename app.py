@@ -4,11 +4,16 @@ import zhconv
 from flask import Flask, render_template, request, abort
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import distinct
+from sqlalchemy import distinct, or_
 
 app = Flask(__name__)
 CORS(app)  #
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///works.db'
+
+# === 【关键修改：给数据库绑定本地绝对路径】 ===
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'works.db')
+# ==========================================
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -90,88 +95,67 @@ def get_files_in_folder(base_path, sub_path=''):
     # 5. 直接返回，不要再加来加去了
     return dirs, all_files
 
-# ============================================
-# 3. 模板过滤器 (Template Filters)
-# ============================================
-
+# ✅ 终极版高亮过滤器
 @app.template_filter('highlight')
 def highlight_filter(text, keyword):
     if not keyword or not text:
         return text
-    # 将关键词同时转为简体和繁体
     k_simp = zhconv.convert(keyword, 'zh-cn')
     k_trad = zhconv.convert(keyword, 'zh-tw')
     
-    # 用正则同时匹配简体或繁体
-    pattern = re.compile(f'({re.escape(k_simp)}|{re.escape(k_trad)})', re.IGNORECASE)
-    return pattern.sub(r'<span class="highlight">\1</span>', text)
-def highlight_filter(text, keyword):
-    """
-    功能：给文本中的关键词加上红色高亮标签
-    """
-    if not keyword or not text:
-        return text
-    # re.IGNORECASE 让搜索不区分大小写
-    pattern = re.compile(f'({re.escape(keyword)})', re.IGNORECASE)
+    variants = {'群': '羣', '羣': '群', '台': '臺', '臺': '台', '里': '裏', '裏': '里', '够': '夠', '夠': '够', '众': '衆', '衆': '众'}
+    search_terms = {k_simp, k_trad, keyword}
+    
+    for char in keyword:
+        if char in variants:
+            search_terms.add(keyword.replace(char, variants[char]))
+            
+    pattern_str = '|'.join([re.escape(term) for term in search_terms if term])
+    pattern = re.compile(f'({pattern_str})', re.IGNORECASE)
     return pattern.sub(r'<span class="highlight">\1</span>', text)
 
+# ✅ 终极版摘录过滤器
 @app.template_filter('extract_sentence')
 def extract_sentence_filter(content, keyword):
-    """
-    功能：在正文中找到关键词所在的句子，并截取出来。
-    """
-    if not keyword or not content:
-        return None
+    if not keyword or not content: return None
     
-    # 1. 为了查找方便，统一转小写找位置 (但截取时用原文本)
-   # 分别找简体和繁体的位置，哪个找到了就用哪个
-    k_simp = zhconv.convert(keyword, 'zh-cn').lower()
-    k_trad = zhconv.convert(keyword, 'zh-tw').lower()
     content_lower = content.lower()
+    search_terms = {zhconv.convert(keyword, 'zh-cn').lower(), zhconv.convert(keyword, 'zh-tw').lower(), keyword.lower()}
+    variants = {'群': '羣', '羣': '群', '台': '臺', '臺': '台', '里': '裏', '裏': '里', '够': '夠', '夠': '够', '众': '衆', '衆': '众'}
     
-    idx = content_lower.find(k_simp)
-    if idx == -1:
-        idx = content_lower.find(k_trad)
+    for char in keyword:
+        if char in variants:
+            var_word = keyword.replace(char, variants[char]).lower()
+            search_terms.add(var_word)
+            search_terms.add(zhconv.convert(var_word, 'zh-cn'))
+            search_terms.add(zhconv.convert(var_word, 'zh-tw'))
+            
+    idx = -1
+    for term in search_terms:
+        idx = content_lower.find(term)
+        if idx != -1: break
+        
+    if idx == -1: return None 
     
-    if idx == -1:
-        return None # 正文里没这个词，返回 None
-    
-    # 2. 向前找句号（确定句子开头）
-    # 往回找最近的 。 ！ ？ 换行符 或者 字符串开头
     start = idx
     while start > 0:
-        char = content[start]
-        if char in ['。', '！', '？', '\n', '!', '?']:
-            start += 1 # 找到标点后，往后挪一位才是文字开始
+        if content[start] in ['。', '！', '？', '\n', '!', '?']:
+            start += 1 
             break
         start -= 1
         
-    # 3. 向后找句号（确定句子结尾）
     end = idx
     total_len = len(content)
     while end < total_len:
-        char = content[end]
-        if char in ['。', '！', '？', '\n', '!', '?']:
-            end += 1 # 把标点符号也带上
+        if content[end] in ['。', '！', '？', '\n', '!', '?']:
+            end += 1 
             break
         end += 1
-    
-    # 4. 截取这句话
+        
     sentence = content[start:end].strip()
-    
-    # 5. 防御性截断：万一这句话特别长（比如几百字没标点），强行截取关键词前后
     if len(sentence) > 150:
-        snippet_start = max(0, idx - 50)
-        snippet_end = min(total_len, idx + 50)
-        sentence = "..." + content[snippet_start:snippet_end] + "..."
-
+        sentence = "..." + content[max(0, idx - 50):min(total_len, idx + 50)] + "..."
     return sentence
-
-
-# ============================================
-# 3. 路由
-# ============================================
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -204,44 +188,48 @@ def creation():
     chart_y = [] # 存数量
 
     if keyword:
-        # 将关键词转为简繁双份
-        k_simp = zhconv.convert(keyword, 'zh-cn')
-        k_trad = zhconv.convert(keyword, 'zh-tw')
+        # 1. 组装所有简繁体和异体字
+        variants = {'群': '羣', '羣': '群', '台': '臺', '臺': '台', '里': '裏', '裏': '里', '够': '夠', '夠': '够', '众': '衆', '衆': '众'}
+        search_terms = {zhconv.convert(keyword, 'zh-cn'), zhconv.convert(keyword, 'zh-tw'), keyword}
+        for char in keyword:
+            if char in variants:
+                var_word = keyword.replace(char, variants[char])
+                search_terms.add(var_word)
+                search_terms.add(zhconv.convert(var_word, 'zh-cn'))
+                search_terms.add(zhconv.convert(var_word, 'zh-tw'))
 
-        # 1. 数据库筛选 (同时找简体和繁体)
-        rule = (
-            Work.title.contains(k_simp) | Work.content.contains(k_simp) |
-            Work.title.contains(k_trad) | Work.content.contains(k_trad)
-        )
+        # 2. 数据库筛选
+        rules = []
+        for term in search_terms:
+            rules.append(Work.title.contains(term))
+            rules.append(Work.content.contains(term))
+            
+        rule = or_(*rules)
         query = query.filter(rule)
         works = query.order_by(Work.id).all()
 
-        # 2. 统计词频逻辑
+        # 3. 统计词频逻辑 (算柱状图数量)
         stats = []
         for work in works:
-            # 统计标题和正文里简繁体关键词出现的总次数
-            c_title = (work.title.count(k_simp) + work.title.count(k_trad)) if work.title else 0
-            c_content = (work.content.count(k_simp) + work.content.count(k_trad)) if work.content else 0
-            total = c_title + c_content
-            
-            # 【新增】：给这篇作品贴上“词频数量”标签，方便下面排序
+            total = 0
+            for term in search_terms:
+                c_title = work.title.count(term) if work.title else 0
+                c_content = work.content.count(term) if work.content else 0
+                total += (c_title + c_content)
+                
             work.match_count = total
             
             if total > 0:
-                stats.append({'title': work.title, 'count': total})
+                author_dict = {'yingzi': '莹姿', 'fengyimei': '冯伊湄', 'wangyingxia': '王映霞', 'wangying': '王莹', 'shenzijiu': '沈兹九'}
+                cn_name = author_dict.get(work.author, work.author)
+                unique_title = f"{work.title}({cn_name})"
+                stats.append({'title': unique_title, 'count': total})
         
-        # 【新增】：让网页下方的“检索结果文章列表”按词频从大到小排队！
         works.sort(key=lambda x: getattr(x, 'match_count', 0), reverse=True)
-
-        # 3. 排序图表数据：按数量从大到小
         stats.sort(key=lambda x: x['count'], reverse=True)
         
-        # 【注意】：这里已经删除了限制前20名的代码，图表会展示所有匹配的文章柱子！
-        
-        # 4. 拆分数据给 Plotly 用
         chart_x = [item['title'] for item in stats]
         chart_y = [item['count'] for item in stats]
-
     else:
         works = query.order_by(Work.id).all()
     years_db = db.session.query(distinct(Work.year)).order_by(Work.year).all()
