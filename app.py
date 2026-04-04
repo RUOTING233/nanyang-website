@@ -126,6 +126,7 @@ def extract_sentence_filter(content, keyword):
     for char in keyword:
         if char in variants:
             var_word = keyword.replace(char, variants[char]).lower()
+            # 【修复关键】：原汁原味的异体字直接加入
             search_terms.add(var_word)
             search_terms.add(zhconv.convert(var_word, 'zh-cn'))
             search_terms.add(zhconv.convert(var_word, 'zh-tw'))
@@ -156,6 +157,8 @@ def extract_sentence_filter(content, keyword):
     if len(sentence) > 150:
         sentence = "..." + content[max(0, idx - 50):min(total_len, idx + 50)] + "..."
     return sentence
+            
+    
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -190,10 +193,12 @@ def creation():
     if keyword:
         # 1. 组装所有简繁体和异体字
         variants = {'群': '羣', '羣': '群', '台': '臺', '臺': '台', '里': '裏', '裏': '里', '够': '夠', '夠': '够', '众': '衆', '衆': '众'}
+        # 【修复】：加入 keyword 原词
         search_terms = {zhconv.convert(keyword, 'zh-cn'), zhconv.convert(keyword, 'zh-tw'), keyword}
         for char in keyword:
             if char in variants:
                 var_word = keyword.replace(char, variants[char])
+                # 【修复关键】：原封不动的异体字直接加入数据库搜索条件
                 search_terms.add(var_word)
                 search_terms.add(zhconv.convert(var_word, 'zh-cn'))
                 search_terms.add(zhconv.convert(var_word, 'zh-tw'))

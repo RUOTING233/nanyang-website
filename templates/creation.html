@@ -38,8 +38,7 @@
         <div class="search-area">
             
             <form action="/creation" method="get" id="basic-search-form">
-                <div id="basic-search-mode" class="search-row-container">
-                    
+                <div id="basic-search-mode" class="search-row-container" {% if keyword %}style="display: none;"{% endif %}></div>
                     <input type="hidden" name="mode" value="search">
 
                     <select name="author" class="search-select">
@@ -81,7 +80,7 @@
                 </div>
             </form>
 
-            <form action="/creation" method="get" id="adv-search-mode" style="display: none;">
+            <form action="/creation" method="get" id="adv-search-mode" style="display: {% if keyword %}flex{% else %}none{% endif %};"></form>
                 <div class="search-row-container">
                     <input type="hidden" name="mode" value="search">
                     <input type="hidden" name="author" value="{{ current_author }}">
