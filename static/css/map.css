@@ -204,36 +204,36 @@ body {
 
 /* 1. 莹姿 (永春) */
 #marker-yingzi { 
-    top: 52.4%;    
-    left: 73.1%;   
+    top: 57.1%;    
+    left: 74.6%;   
     animation-delay: 2.5s; 
 }
 
-/* 2. 王映霞 (厦门) */
+/* 2. 王映霞 (福州) */
 #marker-wang1 { 
-    top: 59%; 
-    left: 73.5%; 
+    top: 52.8%; 
+    left: 76.9%; 
     animation-delay: 2.7s; 
 }
 
 /* 3. 冯伊湄 (广州) */
 #marker-feng { 
-    top: 57.7%; 
-    left: 65.5%; 
+    top: 57.1%; 
+    left: 66.1%; 
     animation-delay: 2.9s; 
 }
 
 /* 4. 王莹 (香港) */
 #marker-wang2 { 
-    top: 63.7%; 
-    left: 64.8%; 
+    top: 63.6%; 
+    left: 65.1%; 
     animation-delay: 3.1s; 
 }
 
 /* 5. 沈兹九 (香港) */
 #marker-shen { 
-    top: 62.9%; 
-    left: 69.4%; 
+    top: 61.4%; 
+    left: 70.1%; 
     animation-delay: 3.3s; 
 }
 /* map.css 的最底部添加 */
